@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ShoppingBag, Heart } from "lucide-react";
 import { fetchWooClient } from "@/lib/woocommerce-client";
+import { useCart } from "@/components/CartContext";
 
 export default function CollectionsClient() {
   const searchParams = useSearchParams();
@@ -15,6 +16,7 @@ export default function CollectionsClient() {
   const [products, setProducts] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     setLoading(true);
@@ -99,10 +101,22 @@ export default function CollectionsClient() {
                       </Link>
                       <div className="flex items-center justify-between mt-2">
                         <div className="flex items-center gap-2">
-                          <button className="w-9 h-9 rounded-full flex items-center justify-center border border-gray-200 text-gray-500 hover:text-pink-500 hover:border-pink-500 transition-colors bg-white">
+                          <button 
+                            onClick={(e) => {
+                              e.preventDefault();
+                              addToCart({
+                                id: String(product.id),
+                                name: product.name,
+                                price: price,
+                                image: image,
+                                quantity: 1
+                              });
+                            }}
+                            className="w-9 h-9 rounded-full flex items-center justify-center border border-gray-200 text-gray-500 hover:text-pink-500 hover:border-pink-500 transition-colors bg-white z-10 relative"
+                          >
                             <ShoppingBag className="w-4 h-4" />
                           </button>
-                          <button className="w-9 h-9 rounded-full flex items-center justify-center border border-gray-200 text-gray-500 hover:text-pink-500 hover:border-pink-500 transition-colors bg-white">
+                          <button className="w-9 h-9 rounded-full flex items-center justify-center border border-gray-200 text-gray-500 hover:text-pink-500 hover:border-pink-500 transition-colors bg-white z-10 relative">
                             <Heart className="w-4 h-4" />
                           </button>
                         </div>

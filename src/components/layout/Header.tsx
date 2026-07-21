@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, ShoppingCart, Heart, User, ChevronDown, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useCart } from "@/components/CartContext";
 
 export function Header() {
   const router = useRouter();
@@ -12,6 +13,9 @@ export function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const { cart, setIsCartOpen } = useCart();
+
+  const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,8 +101,16 @@ export function Header() {
             <button className="w-9 h-9 rounded-full bg-purple-500 text-white flex items-center justify-center hover:bg-purple-600 transition-colors shadow-sm">
               <User className="w-4 h-4" />
             </button>
-            <button className="w-9 h-9 rounded-full bg-white text-gray-700 flex items-center justify-center border border-gray-100 hover:text-pink-500 transition-colors shadow-sm">
+            <button 
+              onClick={() => setIsCartOpen(true)}
+              className="relative w-9 h-9 rounded-full bg-white text-gray-700 flex items-center justify-center border border-gray-100 hover:text-pink-500 transition-colors shadow-sm"
+            >
               <ShoppingCart className="w-4 h-4" />
+              {cartItemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+                  {cartItemCount}
+                </span>
+              )}
             </button>
             <button className="w-9 h-9 rounded-full bg-white text-gray-700 flex items-center justify-center border border-gray-100 hover:text-pink-500 transition-colors shadow-sm">
               <Heart className="w-4 h-4" />
@@ -113,8 +125,16 @@ export function Header() {
             >
               <Search className="w-4 h-4" />
             </button>
-            <button className="w-9 h-9 rounded-full bg-white text-gray-700 flex items-center justify-center border border-gray-100 hover:text-pink-500 transition-colors">
+            <button 
+              onClick={() => setIsCartOpen(true)}
+              className="relative w-9 h-9 rounded-full bg-white text-gray-700 flex items-center justify-center border border-gray-100 hover:text-pink-500 transition-colors"
+            >
               <ShoppingCart className="w-4 h-4" />
+              {cartItemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+                  {cartItemCount}
+                </span>
+              )}
             </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

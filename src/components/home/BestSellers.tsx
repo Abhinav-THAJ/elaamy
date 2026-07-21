@@ -5,7 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
-import { Heart, ShoppingBag, Eye } from "lucide-react";
+import { Heart, ShoppingBag, Eye, Star } from "lucide-react";
+import { useCart } from "@/components/CartContext";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -19,13 +20,16 @@ const DUMMY_PRODUCTS = [
 ];
 
 export function BestSellers({ products = [] }: { products?: any[] }) {
+  const { addToCart } = useCart();
+  
   const displayProducts = products.length > 0 ? products.map(p => ({
-    id: p.id,
+    id: String(p.id),
     name: p.name,
     price_html: p.price_html || `<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">₹</span>${p.price || 0}</bdi></span>`,
+    price: parseFloat(p.price || p.regular_price || "0"),
     image: p.images?.[0]?.src || "/images/custom-wedding-card.png",
     rating: parseFloat(p.average_rating || "5.0")
-  })) : DUMMY_PRODUCTS;
+  })) : DUMMY_PRODUCTS.map(p => ({ ...p, id: String(p.id), price: parseFloat(p.price_html.match(/₹<\/span>([\d.]+)/)?.[1] || "0") }));
 
   return (
     <section className="bg-[#F8F9FA] py-20">
@@ -88,7 +92,16 @@ export function BestSellers({ products = [] }: { products?: any[] }) {
                     </div>
 
                     <div className="absolute bottom-2 left-2 right-2 translate-y-16 group-hover:translate-y-0 transition-transform duration-300">
-                      <button className="w-full bg-gradient-to-r from-pink-400 to-purple-500 text-white py-2 rounded flex items-center justify-center gap-2 hover:shadow-lg transition-all text-sm font-medium">
+                      <button 
+                        onClick={() => addToCart({
+                          id: product.id,
+                          name: product.name,
+                          price: product.price,
+                          image: product.image,
+                          quantity: 1
+                        })}
+                        className="w-full bg-gradient-to-r from-pink-400 to-purple-500 text-white py-2 rounded flex items-center justify-center gap-2 hover:shadow-lg transition-all text-sm font-medium z-10 relative"
+                      >
                         <ShoppingBag className="w-4 h-4" />
                         Add to Cart
                       </button>
@@ -117,14 +130,5 @@ export function BestSellers({ products = [] }: { products?: any[] }) {
         </motion.div>
       </div>
     </section>
-  );
-}
-
-// Temporary Star icon since it wasn't imported from lucide
-function Star(props: any) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-    </svg>
   );
 }

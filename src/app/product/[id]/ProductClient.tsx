@@ -5,12 +5,14 @@ import Image from "next/image";
 import { ShoppingBag, Heart, ShieldCheck, Truck, Star } from "lucide-react";
 import { useParams } from "next/navigation";
 import { fetchWooClient } from "@/lib/woocommerce-client";
+import { useCart } from "@/components/CartContext";
 
 export default function ProductClient() {
   const params = useParams();
   const productId = params?.id as string;
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     if (!productId) return;
@@ -90,7 +92,16 @@ export default function ProductClient() {
             <div className="text-3xl font-bold text-gray-900 mb-8" dangerouslySetInnerHTML={{ __html: product.price_html || `<span>₹${price.toFixed(2)}</span>` }} />
             <div className="prose prose-sm text-gray-600 mb-8 max-w-none" dangerouslySetInnerHTML={{ __html: product.description || product.short_description || "" }} />
             <div className="flex items-center gap-4 mb-8 pb-8 border-b border-gray-100">
-              <button className="flex-1 bg-gradient-to-r from-pink-400 to-purple-500 text-white h-14 rounded-full flex items-center justify-center gap-2 hover:shadow-lg transition-all font-medium text-lg">
+              <button 
+                onClick={() => addToCart({
+                  id: String(product.id),
+                  name: product.name,
+                  price: price,
+                  image: imageUrl,
+                  quantity: 1
+                })}
+                className="flex-1 bg-gradient-to-r from-pink-400 to-purple-500 text-white h-14 rounded-full flex items-center justify-center gap-2 hover:shadow-lg transition-all font-medium text-lg"
+              >
                 <ShoppingBag className="w-5 h-5" /> Add to Cart
               </button>
               <button className="w-14 h-14 bg-pink-50 text-pink-500 rounded-full flex items-center justify-center hover:bg-pink-100 transition-colors flex-shrink-0">

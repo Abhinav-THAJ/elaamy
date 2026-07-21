@@ -35,6 +35,8 @@ export const metadata = {
   description: "Find Something You Love for Someone You Love ❤️",
 };
 
+import { CartSidebar } from "@/components/CartSidebar";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -48,6 +50,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col font-sans bg-white">
         <Providers>
           <Header />
+          <CartSidebar />
           <main className="flex-1">{children}</main>
           <Footer />
         </Providers>
