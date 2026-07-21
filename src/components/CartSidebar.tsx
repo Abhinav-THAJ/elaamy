@@ -116,9 +116,13 @@ export function CartSidebar() {
               <span className="text-2xl font-bold text-gray-900">₹{cartTotal.toFixed(2)}</span>
             </div>
             
-            <button className="w-full py-4 bg-gray-900 text-white rounded-full font-medium text-lg hover:bg-gray-800 transition-colors shadow-lg shadow-gray-200">
+            <Link 
+              href="/checkout"
+              onClick={() => setIsCartOpen(false)}
+              className="w-full py-4 bg-gray-900 text-white rounded-full font-medium text-lg hover:bg-gray-800 transition-colors shadow-lg shadow-gray-200 text-center block"
+            >
               Checkout Now
-            </button>
+            </Link>
             <p className="text-center text-xs text-gray-400 mt-4">
               Shipping and taxes calculated at checkout.
             </p>
