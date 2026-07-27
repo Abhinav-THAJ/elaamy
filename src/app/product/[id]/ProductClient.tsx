@@ -21,6 +21,21 @@ export default function ProductClient() {
       .then((data) => {
         if (data && data.id) {
           setProduct(data);
+          
+          try {
+            // Track recently viewed products in localStorage
+            const viewed = JSON.parse(localStorage.getItem("recently_viewed") || "[]");
+            const filtered = viewed.filter((p: any) => p.id !== data.id);
+            filtered.unshift({
+              id: data.id,
+              name: data.name,
+              images: data.images
+            });
+            // Keep up to 5 items max, oldest disappears
+            localStorage.setItem("recently_viewed", JSON.stringify(filtered.slice(0, 5)));
+          } catch (e) {
+            console.error("Failed to save recently viewed", e);
+          }
         } else {
           setProduct(null); // Product not found / deleted
         }

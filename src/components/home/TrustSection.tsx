@@ -1,44 +1,34 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Image from "next/image";
 
-const stats = [
-  { id: 1, name: "Packaged Sold", value: "30,000+" },
-  { id: 2, name: "Happy Clients", value: "15,000+" },
-  { id: 3, name: "Years Serving", value: "12+" },
-];
-
 export function TrustSection() {
-  return (
-    <section className="bg-white py-16 relative overflow-hidden">
-      {/* Decorative branches (left and right) */}
-      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-48 h-48 opacity-50 pointer-events-none hidden lg:block">
-        <Image src="/images/floral_decor.png" alt="decoration" fill className="object-cover rounded-full" />
-      </div>
-      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-48 h-48 opacity-50 pointer-events-none hidden lg:block">
-        <Image src="/images/floral_decor.png" alt="decoration" fill className="object-cover rounded-full" />
-      </div>
+  const logos = [
+    { name: "Navbharat", src: "https://placehold.co/150x50/eeeeee/333333?text=Navbharat" },
+    { name: "Fortis Hospitals", src: "https://placehold.co/150x50/eeeeee/333333?text=Fortis" },
+    { name: "SAINT-GOBAIN", src: "https://placehold.co/150x50/eeeeee/333333?text=SAINT-GOBAIN" },
+    { name: "Mercedes", src: "https://placehold.co/150x50/eeeeee/333333?text=Mercedes" },
+    { name: "COGNIZANT", src: "https://placehold.co/150x50/eeeeee/333333?text=COGNIZANT" },
+    { name: "GK TMT", src: "https://placehold.co/150x50/eeeeee/333333?text=GK+TMT" },
+    { name: "CHANDIGARH UNIVERSITY", src: "https://placehold.co/150x50/eeeeee/333333?text=Chandigarh+Uni" },
+    { name: "SBI", src: "https://placehold.co/150x50/eeeeee/333333?text=SBI" },
+    { name: "Credix", src: "https://placehold.co/150x50/eeeeee/333333?text=Credix" },
+    { name: "HYATT", src: "https://placehold.co/150x50/eeeeee/333333?text=HYATT" },
+    { name: "Godrej", src: "https://placehold.co/150x50/eeeeee/333333?text=Godrej" },
+  ];
 
-      <div className="container mx-auto px-6 max-w-5xl relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {stats.map((stat, index) => (
-            <motion.div
-              key={stat.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="flex flex-col items-center justify-center text-center p-8 border border-gray-200 rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow"
-            >
-              <h3 className="text-3xl font-serif text-blue-800 font-semibold mb-2">
-                {stat.value}
-              </h3>
-              <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">
-                {stat.name}
-              </p>
-            </motion.div>
+  return (
+    <section className="bg-gradient-to-r from-[#eaf4f4] to-[#f4f7f6] py-10">
+      <div className="container mx-auto px-4 lg:px-8 max-w-7xl">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 sm:gap-8 items-center justify-items-center">
+          {logos.map((logo, idx) => (
+            <div key={idx} className="relative w-28 h-12 grayscale hover:grayscale-0 transition-all opacity-80 hover:opacity-100">
+              <Image src={logo.src} alt={logo.name} fill className="object-contain" />
+            </div>
           ))}
+          <div className="text-gray-600 font-bold italic text-sm text-center">
+            and many more...
+          </div>
         </div>
       </div>
     </section>

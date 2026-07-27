@@ -1,43 +1,49 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Hero } from "@/components/home/Hero";
-import { TrustSection } from "@/components/home/TrustSection";
-import { ShopByOccasion } from "@/components/home/ShopByOccasion";
-import { ShopByRecipient } from "@/components/home/ShopByRecipient";
 import { BestSellers } from "@/components/home/BestSellers";
-import { FeaturedCollection } from "@/components/home/FeaturedCollection";
-import { GiftHampers } from "@/components/home/GiftHampers";
-import { CorporateGifts } from "@/components/home/CorporateGifts";
+import { PopularCategories } from "@/components/home/PopularCategories";
 import { WhyElaamy } from "@/components/home/WhyElaamy";
-import { Features } from "@/components/home/Features";
-import { HowItWorks } from "@/components/home/HowItWorks";
+import { RecentlyViewed } from "@/components/home/RecentlyViewed";
+import { InterestedProducts } from "@/components/home/InterestedProducts";
 import { fetchWooClient } from "@/lib/woocommerce-client";
 
 export default function Home() {
   const [wooProducts, setWooProducts] = useState<any[]>([]);
 
   useEffect(() => {
-    fetchWooClient("products", { per_page: "8" })
+    // Fetch enough products so we can distribute them without repeating
+    // BestSellers needs 4, PopularCategories needs 3, RecentlyViewed needs 5, Interested needs 4. Total = 16.
+    fetchWooClient("products", { per_page: "20" }) 
       .then((data) => {
         if (Array.isArray(data)) setWooProducts(data);
       })
       .catch(() => setWooProducts([]));
   }, []);
 
+  // Split products into non-overlapping chunks
+  const bestSellerProducts = wooProducts.slice(0, 4); // 4 products
+  const popularCatProducts = wooProducts.slice(4, 7); // 3 products
+  const recentlyViewedProducts = wooProducts.slice(7, 12); // 5 products
+  const interestedProducts = wooProducts.slice(12, 16); // 4 products
+
   return (
     <div className="bg-white min-h-screen">
-      <Hero />
-      <ShopByOccasion products={wooProducts} />
-      <TrustSection />
-      <BestSellers products={wooProducts} />
-      <ShopByRecipient />
-      <FeaturedCollection />
-      <GiftHampers products={wooProducts} />
-      <CorporateGifts />
+      {/* 
+        The top navigation, sub-categories, and mega menu are handled in the layout Header.
+        Following the UI image, the page content starts directly with Best Sellers.
+      */}
+      <BestSellers products={bestSellerProducts} />
+      
+      <PopularCategories products={popularCatProducts} />
+      
       <WhyElaamy />
-      <Features />
-      <HowItWorks />
+      
+      {/* Recently Viewed Carousel (5 cards layout) */}
+      <RecentlyViewed products={recentlyViewedProducts} />
+      
+      {/* Interested Products Carousel (4 cards layout) */}
+      <InterestedProducts products={interestedProducts} />
     </div>
   );
 }
