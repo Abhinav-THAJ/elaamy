@@ -1,14 +1,10 @@
-import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Heart, ShoppingBag } from "lucide-react";
 import { fetchWooData } from "@/lib/woocommerce";
 
-const validCategories = ["flower", "cake", "cards", "toys", "events", "contact"];
-
-export function generateStaticParams() {
-  return validCategories.map((category) => ({ category }));
-}
+// Force dynamic rendering — prevents build-time prerender failures
+export const dynamic = "force-dynamic";
 
 export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
   const resolvedParams = await params;
@@ -18,12 +14,11 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
   const categories = await fetchWooData("products/categories", { slug: category });
   const categoryId = categories?.[0]?.id;
   
-  let products = [];
+  let products: any[] = [];
   if (categoryId) {
     products = await fetchWooData("products", { category: categoryId });
   } else {
-    // Fallback if no specific category matched, just fetch recent products
-    products = await fetchWooData("products", { per_page: 12 });
+    products = await fetchWooData("products", { per_page: "12" });
   }
 
   return (
@@ -46,9 +41,9 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
                       Sale
                     </span>
                   )}
-                  <button className="absolute top-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center text-gray-400 hover:text-pink-500 hover:shadow-md transition-all z-10">
+                  <span className="absolute top-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center text-gray-400 z-10">
                     <Heart className="w-4 h-4" />
-                  </button>
+                  </span>
                   <Image
                     src={product.images?.[0]?.src || "/images/custom-wedding-card.png"}
                     alt={product.name}
@@ -66,9 +61,9 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
                     className="text-red-600 font-bold [&_del]:text-gray-400 [&_del]:text-sm [&_del]:line-through [&_del]:font-normal flex gap-2 items-center"
                     dangerouslySetInnerHTML={{ __html: product.price_html || `<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">₹</span>${product.price || 0}</bdi></span>` }}
                   />
-                  <button className="w-8 h-8 rounded-full flex items-center justify-center border border-gray-200 text-gray-500 hover:bg-pink-500 hover:text-white hover:border-pink-500 transition-colors">
+                  <span className="w-8 h-8 rounded-full flex items-center justify-center border border-gray-200 text-gray-500">
                     <ShoppingBag className="w-4 h-4" />
-                  </button>
+                  </span>
                 </div>
               </div>
             ))}

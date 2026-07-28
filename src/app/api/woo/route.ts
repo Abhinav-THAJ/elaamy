@@ -21,8 +21,8 @@ export async function GET(request: Request) {
     const data = await fetchWooData(endpoint, params);
     return NextResponse.json(data);
   } catch (error: any) {
-    console.error('WooCommerce API GET Error:', error?.response?.data || error);
-    return NextResponse.json({ error: 'Failed to fetch WooCommerce data', details: error?.response?.data || error.message }, { status: 500 });
+    console.error('WooCommerce API GET Error:', error);
+    return NextResponse.json({ error: 'Failed to fetch WooCommerce data', details: error?.message }, { status: 500 });
   }
 }
 
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     const data = await postWooData(endpoint, body);
     return NextResponse.json(data);
   } catch (error: any) {
-    console.error('WooCommerce API POST Error:', error?.response?.data || error);
-    return NextResponse.json({ error: 'Failed to post WooCommerce data', details: error?.response?.data }, { status: 500 });
+    console.error('WooCommerce API POST Error:', error);
+    return NextResponse.json({ error: 'Failed to post WooCommerce data', details: error?.message }, { status: 500 });
   }
 }

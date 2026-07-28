@@ -1,29 +1,67 @@
-import WooCommerceRestApi from "@woocommerce/woocommerce-rest-api";
+// Server-side WooCommerce fetcher using native fetch + Basic Auth
+// This is more reliable than the @woocommerce/woocommerce-rest-api package on Vercel
 
-// Initialize WooCommerce REST API Client
-export const api = new WooCommerceRestApi({
-  url: process.env.NEXT_PUBLIC_WOO_URL || "https://example.com",
-  consumerKey: process.env.WOO_CONSUMER_KEY || "ck_example",
-  consumerSecret: process.env.WOO_CONSUMER_SECRET || "cs_example",
-  version: "wc/v3",
-});
+const WOO_URL = (process.env.NEXT_PUBLIC_WOO_URL || "").replace(/\/$/, "");
+const WOO_KEY = process.env.WOO_CONSUMER_KEY || process.env.NEXT_PUBLIC_WOO_CONSUMER_KEY || "";
+const WOO_SECRET = process.env.WOO_CONSUMER_SECRET || process.env.NEXT_PUBLIC_WOO_CONSUMER_SECRET || "";
 
-export async function fetchWooData(endpoint: string, params: any = {}) {
+export async function fetchWooData(endpoint: string, params: Record<string, any> = {}): Promise<any[]> {
   try {
-    const response = await api.get(endpoint, params);
-    return response.data;
+    if (!WOO_URL || !WOO_KEY || !WOO_SECRET) {
+      console.warn("WooCommerce env vars not set");
+      return [];
+    }
+
+    const queryString = new URLSearchParams(
+      Object.fromEntries(Object.entries(params).map(([k, v]) => [k, String(v)]))
+    ).toString();
+
+    const url = `${WOO_URL}/wp-json/wc/v3/${endpoint}${queryString ? `?${queryString}` : ""}`;
+    const credentials = Buffer.from(`${WOO_KEY}:${WOO_SECRET}`).toString("base64");
+
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Basic ${credentials}`,
+        "Content-Type": "application/json",
+      },
+      next: { revalidate: 60 }, // Cache for 60 seconds
+    });
+
+    if (!res.ok) {
+      console.error(`WooCommerce fetch failed: ${res.status} ${res.statusText} for ${url}`);
+      return [];
+    }
+
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
   } catch (error) {
-    console.error(`Error fetching ${endpoint}:`, error);
-    throw error;
+    console.error(`Error fetching WooCommerce ${endpoint}:`, error);
+    return [];
   }
 }
 
-export async function postWooData(endpoint: string, data: any = {}) {
-  try {
-    const response = await api.post(endpoint, data);
-    return response.data;
-  } catch (error) {
-    console.error(`Error posting to ${endpoint}:`, error);
-    throw error;
+export async function postWooData(endpoint: string, data: any = {}): Promise<any> {
+  if (!WOO_URL || !WOO_KEY || !WOO_SECRET) {
+    throw new Error("WooCommerce env vars not set");
   }
+
+  const url = `${WOO_URL}/wp-json/wc/v3/${endpoint}`;
+  const credentials = Buffer.from(`${WOO_KEY}:${WOO_SECRET}`).toString("base64");
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Basic ${credentials}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    const errBody = await res.text();
+    console.error(`WooCommerce POST failed: ${res.status}`, errBody);
+    throw new Error(`WooCommerce POST failed: ${res.status}`);
+  }
+
+  return res.json();
 }
