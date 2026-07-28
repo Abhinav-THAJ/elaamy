@@ -46,7 +46,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
                       Sale
                     </span>
                   )}
-                  <button className="absolute top-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center text-gray-400 hover:text-pink-500 hover:shadow-md transition-all z-10" onClick={(e) => e.preventDefault()}>
+                  <button className="absolute top-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center text-gray-400 hover:text-pink-500 hover:shadow-md transition-all z-10">
                     <Heart className="w-4 h-4" />
                   </button>
                   <Image
