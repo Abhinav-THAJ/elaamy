@@ -2,63 +2,73 @@
 
 import Link from "next/link";
 
+const Facebook = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+);
+const Instagram = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16.11 11.66a5 5 0 1 1-5.02-5.02 5 5 0 0 1 5.02 5.02Z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+);
+const Twitter = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+);
+const Youtube = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></svg>
+);
+
 export function Footer() {
   return (
     <footer className="bg-[#F8F9FA] pt-12 md:pt-16">
       {/* Newsletter Banner */}
       <div className="bg-white py-8 md:py-12 mb-8 md:mb-12 border-b border-gray-100">
         <div className="container mx-auto px-4 sm:px-6 max-w-6xl">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-            <div>
-              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">Join our newsletter for ₹100 off</h3>
-              <p className="text-sm text-gray-500">Register now to get latest updates on promotions &amp; coupons.</p>
-              <p className="text-sm text-gray-400">Don&apos;t worry, we won&apos;t spam!</p>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="text-center md:text-left">
+              <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">Join our newsletter</h3>
+              <p className="text-gray-500 text-sm max-w-md">Get exclusive offers, original stories, events and more.</p>
             </div>
-            <form className="flex w-full sm:w-auto gap-2" onSubmit={(e) => e.preventDefault()}>
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 sm:w-56 px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-pink-100"
+            <div className="w-full md:w-auto flex flex-col sm:flex-row gap-3">
+              <input 
+                type="email" 
+                placeholder="Enter your email" 
+                className="w-full sm:w-72 px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 text-sm text-black"
               />
-              <button className="px-5 py-2.5 bg-gradient-to-r from-pink-400 to-purple-500 text-white text-sm font-medium rounded-lg hover:shadow-md transition-all">
+              <button className="whitespace-nowrap px-6 py-3 bg-gray-900 hover:bg-black text-white rounded-lg font-semibold text-sm transition-colors">
                 Subscribe
               </button>
-            </form>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Footer Grid */}
-      <div className="container mx-auto px-4 sm:px-6 max-w-6xl pb-10 md:pb-14">
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-8">
-          {/* Contact */}
-          <div className="col-span-2 sm:col-span-1">
-            <h4 className="text-sm font-bold text-gray-900 mb-4">Need Help?</h4>
-            <p className="text-xs text-gray-500 mb-3 leading-relaxed">
-              We&apos;re here to help you with all your custom printing needs.
+      {/* Main Footer Content */}
+      <div className="container mx-auto px-4 sm:px-6 max-w-6xl mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 lg:gap-12">
+          {/* Brand Column */}
+          <div className="col-span-2 lg:col-span-2">
+            <Link href="/" className="inline-block mb-6">
+              <span className="text-[#f16334] text-3xl font-extrabold">E</span>
+              <span className="text-pink-600 text-2xl font-extrabold tracking-tight">LAAMY</span>
+            </Link>
+            <p className="text-gray-500 text-sm leading-relaxed max-w-sm mb-6">
+              We bring your ideas to life with premium customized gifts, elegant wedding cards, and professional business stationery.
             </p>
-            <p className="text-lg font-bold text-[#f16334] mb-1">+91 9656262613</p>
-            <p className="text-[10px] text-gray-400 mb-3">Mon–Sun: 9:00 AM – 6:00 PM</p>
-            <p className="text-xs text-gray-500">Email: elaamy@gmail.com</p>
+            <div className="space-y-3">
+              <p className="flex items-center gap-3 text-sm text-gray-600">
+                <span className="w-8 h-8 rounded-full bg-pink-50 flex items-center justify-center text-pink-500 font-bold">📞</span>
+                +971 50 123 4567
+              </p>
+              <p className="flex items-center gap-3 text-sm text-gray-600">
+                <span className="w-8 h-8 rounded-full bg-pink-50 flex items-center justify-center text-pink-500 font-bold">✉️</span>
+                hello@elaamy.com
+              </p>
+            </div>
           </div>
 
-          {/* Help Links */}
+          {/* Quick Links */}
           <div>
-            <h4 className="text-sm font-bold text-gray-900 mb-4">Help &amp; Info</h4>
+            <h4 className="text-sm font-bold text-gray-900 mb-4">Shop Categories</h4>
             <ul className="space-y-2.5 text-xs text-gray-500">
-              {["Your Orders", "Returns & Replacements", "Shipping Policy", "Refund Policy", "Privacy Policy", "Terms & Conditions", "Help Center"].map((item) => (
-                <li key={item}>
-                  <Link href="#" className="hover:text-gray-900 hover:text-pink-500 transition-colors">{item}</Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Company */}
-          <div>
-            <h4 className="text-sm font-bold text-gray-900 mb-4">Company</h4>
-            <ul className="space-y-2.5 text-xs text-gray-500">
-              {["About Us", "Careers", "Investor Relations", "Customer Reviews", "Social Responsibility", "Store Locations", "Blog"].map((item) => (
+              {["Wedding Cards", "Mementos & Awards", "Corporate Gifts", "Business Stationery", "Packaging", "Stickers"].map((item) => (
                 <li key={item}>
                   <Link href="#" className="hover:text-pink-500 transition-colors">{item}</Link>
                 </li>
@@ -66,7 +76,19 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Business */}
+          {/* Help & Support */}
+          <div>
+            <h4 className="text-sm font-bold text-gray-900 mb-4">Customer Service</h4>
+            <ul className="space-y-2.5 text-xs text-gray-500">
+              {["Track Order", "Shipping & Returns", "FAQ", "Contact Us", "Terms & Conditions", "Privacy Policy"].map((item) => (
+                <li key={item}>
+                  <Link href="#" className="hover:text-pink-500 transition-colors">{item}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* For Business */}
           <div>
             <h4 className="text-sm font-bold text-gray-900 mb-4">For Business</h4>
             <ul className="space-y-2.5 text-xs text-gray-500">
@@ -79,12 +101,17 @@ export function Footer() {
             <div className="mt-6">
               <h4 className="text-sm font-bold text-gray-900 mb-3">Follow Us</h4>
               <div className="flex gap-3">
-                {["FB", "IG", "TW", "YT"].map((social) => (
+                {[
+                  { id: "fb", icon: Facebook, hover: "hover:bg-blue-100 hover:text-blue-600" },
+                  { id: "ig", icon: Instagram, hover: "hover:bg-pink-100 hover:text-pink-600" },
+                  { id: "tw", icon: Twitter, hover: "hover:bg-sky-100 hover:text-sky-500" },
+                  { id: "yt", icon: Youtube, hover: "hover:bg-red-100 hover:text-red-600" }
+                ].map((social) => (
                   <button
-                    key={social}
-                    className="w-8 h-8 rounded-full bg-gray-200 hover:bg-pink-100 hover:text-pink-500 text-gray-600 text-xs font-bold flex items-center justify-center transition-colors"
+                    key={social.id}
+                    className={`w-9 h-9 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center transition-all ${social.hover}`}
                   >
-                    {social}
+                    <social.icon className="w-4 h-4" />
                   </button>
                 ))}
               </div>
@@ -97,7 +124,7 @@ export function Footer() {
       <div className="bg-[#1A1A1A] py-4">
         <div className="container mx-auto px-4 sm:px-6 max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
           <p className="text-[11px] text-[#A0A0A0]">
-            © Elaamy 2024. All rights reserved.
+            © Empireae 2026. All rights reserved.
           </p>
           <div className="flex items-center gap-3">
             <div className="px-3 h-8 bg-black border border-[#333] rounded flex items-center justify-center opacity-80 hover:opacity-100 transition-opacity cursor-pointer">

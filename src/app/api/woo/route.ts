@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { fetchWooData } from '@/lib/woocommerce';
+import { fetchWooData, postWooData } from '@/lib/woocommerce';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -22,5 +22,23 @@ export async function GET(request: Request) {
     return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch WooCommerce data' }, { status: 500 });
+  }
+}
+
+export async function POST(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const endpoint = searchParams.get('endpoint');
+  
+  if (!endpoint) {
+    return NextResponse.json({ error: 'Endpoint is required' }, { status: 400 });
+  }
+
+  try {
+    const body = await request.json();
+    const data = await postWooData(endpoint, body);
+    return NextResponse.json(data);
+  } catch (error: any) {
+    console.error('WooCommerce API POST Error:', error?.response?.data || error);
+    return NextResponse.json({ error: 'Failed to post WooCommerce data', details: error?.response?.data }, { status: 500 });
   }
 }

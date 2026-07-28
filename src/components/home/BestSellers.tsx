@@ -4,45 +4,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { Heart, ShoppingBag } from "lucide-react";
 
-const DUMMY_PRODUCTS = [
-  {
-    id: 1,
-    name: "Kont – 2 Ring – Medium – Blue – DW1265",
-    price_html: '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">₹</span>16.00</bdi></span>',
-    image: "/images/custom-wedding-card.png",
-    sale: true,
-  },
-  {
-    id: 2,
-    name: "Acrylic Photo Frame",
-    price_html: '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">₹</span>145.00</bdi></span>',
-    image: "/images/custom-wedding-card.png",
-    sale: false,
-  },
-  {
-    id: 3,
-    name: "Premium Memento Award",
-    price_html: '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">₹</span>15.50</bdi></span>',
-    image: "/images/custom-wedding-card.png",
-    sale: true,
-  },
-  {
-    id: 4,
-    name: "Custom Printed Letter Pad",
-    price_html: '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">₹</span>35.00</bdi></span>',
-    image: "/images/custom-wedding-card.png",
-    sale: false,
-  },
-];
-
 export function BestSellers({ products = [] }: { products?: any[] }) {
-  const displayProducts = products.length > 0 ? products.slice(0, 4).map(p => ({
+  if (!products || products.length === 0) return null;
+
+  const displayProducts = products.slice(0, 4).map(p => ({
     id: p.id,
     name: p.name,
     price_html: p.price_html || `<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">₹</span>${p.price || 0}</bdi></span>`,
     image: p.images?.[0]?.src || "/images/custom-wedding-card.png",
     sale: p.on_sale,
-  })) : DUMMY_PRODUCTS;
+  }));
 
   return (
     <section className="py-10 bg-white">

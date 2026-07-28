@@ -17,3 +17,13 @@ export async function fetchWooData(endpoint: string, params: any = {}) {
     return [];
   }
 }
+
+export async function postWooData(endpoint: string, data: any = {}) {
+  try {
+    const response = await api.post(endpoint, data);
+    return response.data;
+  } catch (error) {
+    console.error(`Error posting to ${endpoint}:`, error);
+    throw error;
+  }
+}

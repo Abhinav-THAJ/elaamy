@@ -4,20 +4,15 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 
-const DUMMY_HAMPERS = [
-  { id: 1, name: "Spot - Ruby - Green - DW1077", price_html: '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">₹</span>12.00</bdi></span>', image: "/images/custom-wedding-card.png" },
-  { id: 2, name: "Kont - Folder - Medium - Violet", price_html: '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">₹</span>10.50</bdi></span>', image: "/images/custom-wedding-card.png" },
-  { id: 3, name: "Kont - Folder - Medium - Red", price_html: '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">₹</span>10.50</bdi></span>', image: "/images/custom-wedding-card.png" },
-  { id: 4, name: "Kont - Folder - Medium - Blue", price_html: '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">₹</span>10.50</bdi></span>', image: "/images/custom-wedding-card.png" },
-];
-
 export function GiftHampers({ products = [] }: { products?: any[] }) {
-  const displayHampers = products.length > 0 ? products.slice(0, 4).map(p => ({
+  if (!products || products.length === 0) return null;
+
+  const displayHampers = products.slice(0, 4).map(p => ({
     id: p.id,
     name: p.name,
     price_html: p.price_html || `<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">₹</span>${p.price || 0}</bdi></span>`,
     image: p.images?.[0]?.src || "/images/custom-wedding-card.png",
-  })) : DUMMY_HAMPERS;
+  }));
 
   return (
     <section className="bg-[#F8F9FA] py-20">

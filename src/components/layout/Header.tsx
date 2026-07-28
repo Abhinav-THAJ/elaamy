@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import NextImage from "next/image";
 import { useRouter } from "next/navigation";
 import { Search, ShoppingCart, User, ChevronDown, Menu, X, Phone, Globe, Gift, Camera, BookOpen, Trophy, Mail, Briefcase, Package, Stamp } from "lucide-react";
 import { useCart } from "@/components/CartContext";
@@ -32,14 +33,14 @@ export function Header() {
   ];
 
   const subCategories = [
-    { name: "Personalized Gifts", icon: Gift },
-    { name: "Wedding Cards", icon: Mail },
-    { name: "Mementos & Awards", icon: Trophy },
-    { name: "Photo Gifts", icon: Camera },
-    { name: "Business Stationery", icon: Briefcase },
-    { name: "Packaging", icon: Package },
-    { name: "Corporate Combos", icon: Package },
-    { name: "Stickers", icon: Stamp },
+    { name: "Personalized Gifts", image: "https://loremflickr.com/200/200/giftbox" },
+    { name: "Wedding Cards", image: "https://loremflickr.com/200/200/wedding,card" },
+    { name: "Mementos & Awards", image: "https://loremflickr.com/200/200/trophy" },
+    { name: "Photo Gifts", image: "https://loremflickr.com/200/200/polaroid" },
+    { name: "Business Stationery", image: "https://loremflickr.com/200/200/stationery" },
+    { name: "Packaging", image: "https://loremflickr.com/200/200/cardboard,box" },
+    { name: "Corporate Combos", image: "https://loremflickr.com/200/200/diary,pen" },
+    { name: "Stickers", image: "https://loremflickr.com/200/200/stickers" },
   ];
 
   return (
@@ -65,8 +66,15 @@ export function Header() {
         <div className="container mx-auto px-4 lg:px-8 flex items-center justify-between gap-6 lg:gap-10">
           
           {/* Logo */}
-          <Link href="/" className="flex-shrink-0 text-pink-600 font-extrabold text-3xl tracking-tight flex items-center gap-1">
-            <span className="text-[#f16334] text-4xl">E</span>LAAMY
+          <Link href="/" className="flex-shrink-0 flex items-center">
+            <NextImage 
+              src="/logo.png" 
+              alt="Elaamy Logo" 
+              width={140} 
+              height={50} 
+              className="object-contain w-24 sm:w-28 h-auto" 
+              priority
+            />
           </Link>
 
           {/* Search Bar */}
@@ -149,75 +157,75 @@ export function Header() {
                       {/* Column 1 */}
                       <div>
                         <h4 className="text-[#6c2bd9] font-bold mb-4 pb-1 border-b border-gray-100 text-sm">Best Sellers</h4>
-                        <ul className="space-y-2.5 text-gray-600 text-[13px]">
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Wedding Cards</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Acrylic Photo Frames</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Premium Mementos</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Custom Letter Pads</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Stickers &amp; Labels</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Corporate Gift Sets</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Custom Folders</li>
+                        <ul className="space-y-2.5 text-gray-600 text-[13px] flex flex-col">
+                          <Link href="/collections?category=Wedding" className="hover:text-[#6c2bd9] transition-colors">Wedding Cards</Link>
+                          <Link href="/collections?category=Photo" className="hover:text-[#6c2bd9] transition-colors">Acrylic Photo Frames</Link>
+                          <Link href="/collections?category=Mementos" className="hover:text-[#6c2bd9] transition-colors">Premium Mementos</Link>
+                          <Link href="/collections?category=Stationery" className="hover:text-[#6c2bd9] transition-colors">Custom Letter Pads</Link>
+                          <Link href="/collections?category=Stickers" className="hover:text-[#6c2bd9] transition-colors">Stickers &amp; Labels</Link>
+                          <Link href="/collections?category=Corporate" className="hover:text-[#6c2bd9] transition-colors">Corporate Gift Sets</Link>
+                          <Link href="/collections?category=Stationery" className="hover:text-[#6c2bd9] transition-colors">Custom Folders</Link>
                         </ul>
                       </div>
                       {/* Column 2 */}
                       <div>
                         <h4 className="text-gray-800 font-bold mb-4 pb-1 border-b border-gray-100 text-sm">Browse Category By</h4>
-                        <ul className="space-y-2.5 text-gray-600 text-[13px]">
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Wedding Cards</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Mementos &amp; Awards</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Photo Gifts</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Business Stationery</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Stickers</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Packaging</li>
+                        <ul className="space-y-2.5 text-gray-600 text-[13px] flex flex-col">
+                          <Link href="/collections?category=Wedding" className="hover:text-[#6c2bd9] transition-colors">Wedding Cards</Link>
+                          <Link href="/collections?category=Mementos" className="hover:text-[#6c2bd9] transition-colors">Mementos &amp; Awards</Link>
+                          <Link href="/collections?category=Photo" className="hover:text-[#6c2bd9] transition-colors">Photo Gifts</Link>
+                          <Link href="/collections?category=Stationery" className="hover:text-[#6c2bd9] transition-colors">Business Stationery</Link>
+                          <Link href="/collections?category=Stickers" className="hover:text-[#6c2bd9] transition-colors">Stickers</Link>
+                          <Link href="/collections?category=Packaging" className="hover:text-[#6c2bd9] transition-colors">Packaging</Link>
                         </ul>
                       </div>
                       {/* Column 3 */}
                       <div>
                         <h4 className="text-gray-800 font-bold mb-4 pb-1 border-b border-gray-100 text-sm">Wedding Cards</h4>
-                        <ul className="space-y-2.5 text-gray-600 text-[13px]">
-                          <li className="hover:text-[#6c2bd9] cursor-pointer font-medium text-[#6c2bd9]">View All &gt;</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Premium Wedding Cards</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Designer Invitations</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Ring Bound Cards</li>
+                        <ul className="space-y-2.5 text-gray-600 text-[13px] flex flex-col">
+                          <Link href="/collections?category=Wedding" className="hover:text-[#6c2bd9] transition-colors font-medium text-[#6c2bd9]">View All &gt;</Link>
+                          <Link href="/collections?category=Wedding" className="hover:text-[#6c2bd9] transition-colors">Premium Wedding Cards</Link>
+                          <Link href="/collections?category=Wedding" className="hover:text-[#6c2bd9] transition-colors">Designer Invitations</Link>
+                          <Link href="/collections?category=Wedding" className="hover:text-[#6c2bd9] transition-colors">Ring Bound Cards</Link>
                         </ul>
                         <h4 className="text-gray-800 font-bold mt-6 mb-4 pb-1 border-b border-gray-100 text-sm">Photo Gifts</h4>
-                        <ul className="space-y-2.5 text-gray-600 text-[13px]">
-                          <li className="hover:text-[#6c2bd9] cursor-pointer font-medium text-[#6c2bd9]">View All &gt;</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Acrylic Photo Frames</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Custom Canvas Prints</li>
+                        <ul className="space-y-2.5 text-gray-600 text-[13px] flex flex-col">
+                          <Link href="/collections?category=Photo" className="hover:text-[#6c2bd9] transition-colors font-medium text-[#6c2bd9]">View All &gt;</Link>
+                          <Link href="/collections?category=Photo" className="hover:text-[#6c2bd9] transition-colors">Acrylic Photo Frames</Link>
+                          <Link href="/collections?category=Photo" className="hover:text-[#6c2bd9] transition-colors">Custom Canvas Prints</Link>
                         </ul>
                       </div>
                       {/* Column 4 */}
                       <div>
                         <h4 className="text-gray-800 font-bold mb-4 pb-1 border-b border-gray-100 text-sm">Mementos &amp; Awards</h4>
-                        <ul className="space-y-2.5 text-gray-600 text-[13px]">
-                          <li className="hover:text-[#6c2bd9] cursor-pointer font-medium text-[#6c2bd9]">View All &gt;</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Premium Mementos</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Glass Mementos</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Trophies</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Wooden Awards</li>
+                        <ul className="space-y-2.5 text-gray-600 text-[13px] flex flex-col">
+                          <Link href="/collections?category=Mementos" className="hover:text-[#6c2bd9] transition-colors font-medium text-[#6c2bd9]">View All &gt;</Link>
+                          <Link href="/collections?category=Mementos" className="hover:text-[#6c2bd9] transition-colors">Premium Mementos</Link>
+                          <Link href="/collections?category=Mementos" className="hover:text-[#6c2bd9] transition-colors">Glass Mementos</Link>
+                          <Link href="/collections?category=Mementos" className="hover:text-[#6c2bd9] transition-colors">Trophies</Link>
+                          <Link href="/collections?category=Mementos" className="hover:text-[#6c2bd9] transition-colors">Wooden Awards</Link>
                         </ul>
                       </div>
                       {/* Column 5 */}
                       <div>
                         <h4 className="text-gray-800 font-bold mb-4 pb-1 border-b border-gray-100 text-sm">Business Stationery</h4>
-                        <ul className="space-y-2.5 text-gray-600 text-[13px]">
-                          <li className="hover:text-[#6c2bd9] cursor-pointer font-medium text-[#6c2bd9]">View All &gt;</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Custom Letter Pads</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Custom Folders</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Business Cards</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Letterheads</li>
+                        <ul className="space-y-2.5 text-gray-600 text-[13px] flex flex-col">
+                          <Link href="/collections?category=Stationery" className="hover:text-[#6c2bd9] transition-colors font-medium text-[#6c2bd9]">View All &gt;</Link>
+                          <Link href="/collections?category=Stationery" className="hover:text-[#6c2bd9] transition-colors">Custom Letter Pads</Link>
+                          <Link href="/collections?category=Stationery" className="hover:text-[#6c2bd9] transition-colors">Custom Folders</Link>
+                          <Link href="/collections?category=Stationery" className="hover:text-[#6c2bd9] transition-colors">Business Cards</Link>
+                          <Link href="/collections?category=Stationery" className="hover:text-[#6c2bd9] transition-colors">Letterheads</Link>
                         </ul>
                       </div>
                       {/* Column 6 */}
                       <div>
                         <h4 className="text-gray-800 font-bold mb-4 pb-1 border-b border-gray-100 text-sm">Packaging &amp; Stickers</h4>
-                        <ul className="space-y-2.5 text-gray-600 text-[13px]">
-                          <li className="hover:text-[#6c2bd9] cursor-pointer font-medium text-[#6c2bd9]">View All &gt;</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Custom Stickers</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Product Labels</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Packaging Boxes</li>
-                          <li className="hover:text-[#6c2bd9] cursor-pointer">Carry Bags</li>
+                        <ul className="space-y-2.5 text-gray-600 text-[13px] flex flex-col">
+                          <Link href="/collections?category=Packaging" className="hover:text-[#6c2bd9] transition-colors font-medium text-[#6c2bd9]">View All &gt;</Link>
+                          <Link href="/collections?category=Stickers" className="hover:text-[#6c2bd9] transition-colors">Custom Stickers</Link>
+                          <Link href="/collections?category=Stickers" className="hover:text-[#6c2bd9] transition-colors">Product Labels</Link>
+                          <Link href="/collections?category=Packaging" className="hover:text-[#6c2bd9] transition-colors">Packaging Boxes</Link>
+                          <Link href="/collections?category=Packaging" className="hover:text-[#6c2bd9] transition-colors">Carry Bags</Link>
                         </ul>
                       </div>
                     </div>
@@ -229,16 +237,31 @@ export function Header() {
         </div>
       </div>
 
-      {/* Sub Categories with Icons */}
-      <div className="hidden md:block py-6 bg-[#fcfcfc] border-b border-gray-100">
+      {/* Sub Categories with Photos - Story Style */}
+      <div className="hidden md:block py-8 bg-gradient-to-b from-white to-[#fcfafc] border-b border-purple-50">
         <div className="container mx-auto px-4 lg:px-8">
-          <ul className="flex flex-wrap items-center justify-center gap-10 text-[12px] font-semibold text-gray-700">
+          <ul className="flex items-center justify-center gap-6 lg:gap-10 overflow-x-auto no-scrollbar px-2 pb-2">
             {subCategories.map((sub, idx) => (
-              <li key={idx} className="flex flex-col items-center gap-2 cursor-pointer hover:text-[#6c2bd9] transition-colors">
-                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-[0_4px_12px_rgba(0,0,0,0.05)] border border-gray-100 text-[#6c2bd9] hover:scale-110 transition-transform">
-                  <sub.icon className="w-6 h-6" strokeWidth={1.5} />
+              <li 
+                key={idx} 
+                className="group flex flex-col items-center gap-3 cursor-pointer flex-shrink-0"
+              >
+                {/* Image Container with Gradient Border */}
+                <div className="relative p-[3px] rounded-full bg-gradient-to-tr from-gray-200 to-gray-100 group-hover:from-pink-500 group-hover:via-purple-500 group-hover:to-orange-400 transition-all duration-500 shadow-[0_4px_12px_rgba(0,0,0,0.05)] group-hover:shadow-[0_8px_20px_rgba(108,43,217,0.2)] hover:-translate-y-1">
+                  <div className="w-16 h-16 md:w-[72px] md:h-[72px] rounded-full border-[3px] border-white overflow-hidden relative bg-white">
+                    <NextImage 
+                      src={sub.image}
+                      alt={sub.name}
+                      fill
+                      sizes="100px"
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                    />
+                  </div>
                 </div>
-                <span>{sub.name}</span>
+                {/* Text */}
+                <span className="text-[13px] font-bold text-gray-600 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-pink-600 group-hover:to-purple-600 transition-all duration-300 whitespace-nowrap">
+                  {sub.name}
+                </span>
               </li>
             ))}
           </ul>

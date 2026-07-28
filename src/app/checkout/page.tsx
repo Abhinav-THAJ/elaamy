@@ -10,11 +10,58 @@ export default function CheckoutPage() {
   const { cart, cartTotal, clearCart } = useCart();
   const [orderPlaced, setOrderPlaced] = useState(false);
 
-  const handleCheckout = (e: React.FormEvent) => {
+  const handleCheckout = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Simulate placing an order
-    setOrderPlaced(true);
-    clearCart();
+    const formData = new FormData(e.currentTarget);
+    
+    const orderData = {
+      payment_method: "cod",
+      payment_method_title: "Cash on delivery",
+      set_paid: false,
+      billing: {
+        first_name: formData.get("firstName") as string,
+        last_name: formData.get("lastName") as string,
+        address_1: formData.get("address") as string,
+        address_2: formData.get("apartment") as string,
+        city: formData.get("city") as string,
+        state: formData.get("state") as string,
+        postcode: formData.get("zip") as string,
+        country: "AE",
+        email: formData.get("email") as string,
+      },
+      shipping: {
+        first_name: formData.get("firstName") as string,
+        last_name: formData.get("lastName") as string,
+        address_1: formData.get("address") as string,
+        address_2: formData.get("apartment") as string,
+        city: formData.get("city") as string,
+        state: formData.get("state") as string,
+        postcode: formData.get("zip") as string,
+        country: "AE",
+      },
+      line_items: cart.map(item => ({
+        product_id: parseInt(item.id),
+        quantity: item.quantity
+      }))
+    };
+
+    try {
+      const res = await fetch("/api/woo?endpoint=orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderData)
+      });
+      
+      if (res.ok) {
+        setOrderPlaced(true);
+        clearCart();
+      } else {
+        alert("There was an issue processing your order. Please try again.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong while placing the order.");
+    }
   };
 
   if (orderPlaced) {
@@ -70,37 +117,37 @@ export default function CheckoutPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                  <input type="text" required className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-100 focus:outline-none" />
+                  <input type="text" name="firstName" required className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-100 focus:outline-none" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                  <input type="text" required className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-100 focus:outline-none" />
+                  <input type="text" name="lastName" required className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-100 focus:outline-none" />
                 </div>
               </div>
               
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                <input type="email" required className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-100 focus:outline-none" />
+                <input type="email" name="email" required className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-100 focus:outline-none" />
               </div>
               
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Street Address</label>
-                <input type="text" required className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-100 focus:outline-none mb-2" placeholder="House number and street name" />
-                <input type="text" className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-100 focus:outline-none" placeholder="Apartment, suite, unit, etc. (optional)" />
+                <input type="text" name="address" required className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-100 focus:outline-none mb-2" placeholder="House number and street name" />
+                <input type="text" name="apartment" className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-100 focus:outline-none" placeholder="Apartment, suite, unit, etc. (optional)" />
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                 <div className="md:col-span-1">
                   <label className="block text-sm font-medium text-gray-700 mb-2">City</label>
-                  <input type="text" required className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-100 focus:outline-none" />
+                  <input type="text" name="city" required className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-100 focus:outline-none" />
                 </div>
                 <div className="md:col-span-1">
                   <label className="block text-sm font-medium text-gray-700 mb-2">State</label>
-                  <input type="text" required className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-100 focus:outline-none" />
+                  <input type="text" name="state" required className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-100 focus:outline-none" />
                 </div>
                 <div className="md:col-span-1">
                   <label className="block text-sm font-medium text-gray-700 mb-2">ZIP Code</label>
-                  <input type="text" required className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-100 focus:outline-none" />
+                  <input type="text" name="zip" required className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-100 focus:outline-none" />
                 </div>
               </div>
               

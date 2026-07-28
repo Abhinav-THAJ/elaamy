@@ -5,26 +5,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { ShoppingBag, Heart } from "lucide-react";
 
-const DUMMY_PRODUCTS = [
-  { id: 1, name: "Kont – 2 Ring – Medium – Blue – DW1265", price_html: '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">₹</span>6.00</bdi></span>', image: "/images/custom-wedding-card.png" },
-  { id: 2, name: "Knot – 2 Ring – Majanta Small – DW1239", price_html: '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">₹</span>5.50</bdi></span>', image: "/images/custom-wedding-card.png" },
-  { id: 3, name: "Spot – Golden – Blue – DW1044", price_html: '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">₹</span>12.00</bdi></span>', image: "/images/custom-wedding-card.png" },
-  { id: 4, name: "Acrylic Photo Frame", price_html: '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">₹</span>45.00</bdi></span>', image: "/images/custom-wedding-card.png" },
-  { id: 5, name: "Premium Memento Award", price_html: '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">₹</span>15.50</bdi></span>', image: "/images/custom-wedding-card.png" },
-  { id: 6, name: "Custom Printed Letter Pad", price_html: '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">₹</span>35.00</bdi></span>', image: "/images/custom-wedding-card.png" },
-  { id: 7, name: "Kont - Folder - Medium - Violet", price_html: '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">₹</span>10.50</bdi></span>', image: "/images/custom-wedding-card.png" },
-  { id: 8, name: "Spot - Ruby - Green - DW1077", price_html: '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">₹</span>12.00</bdi></span>', image: "/images/custom-wedding-card.png" },
-];
-
 const categories = ["Photo Frame", "Acrylic Photo Frames", "Letter Pad", "Memento and award", "Sticker", "Wedding Card"];
 
 export function ShopByOccasion({ products = [] }: { products?: any[] }) {
-  const displayProducts = products.length > 0 ? products.slice(0, 8).map(p => ({
+  if (!products || products.length === 0) return null;
+
+  const displayProducts = products.slice(0, 8).map(p => ({
     id: p.id,
     name: p.name,
     price_html: p.price_html || `<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">₹</span>${p.price || 0}</bdi></span>`,
     image: p.images?.[0]?.src || "/images/custom-wedding-card.png",
-  })) : DUMMY_PRODUCTS;
+  }));
 
   return (
     <section className="bg-white py-20">
