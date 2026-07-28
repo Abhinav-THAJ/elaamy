@@ -285,6 +285,43 @@ export function Header() {
         </div>
       </div>
 
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden absolute top-full left-0 w-full bg-white shadow-xl z-50 border-t border-gray-100 max-h-[calc(100vh-100px)] overflow-y-auto">
+          <div className="p-4 border-b border-gray-100">
+            <form onSubmit={handleSearch} className="w-full flex shadow-sm rounded-md overflow-hidden border border-gray-200">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search products..."
+                className="w-full pl-4 pr-4 py-3 bg-gray-50 text-sm focus:outline-none focus:bg-white"
+              />
+              <button type="submit" className="bg-[#e21b22] text-white px-6 font-medium hover:bg-red-700">
+                <Search className="w-5 h-5" />
+              </button>
+            </form>
+          </div>
+          <ul className="flex flex-col py-2">
+            <li className="px-6 py-3 border-b border-gray-50 font-bold text-gray-900">Categories</li>
+            {topCategories.map((cat, idx) => (
+              <li key={idx}>
+                <Link 
+                  href={`/collections?category=${cat}`} 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-6 py-3 text-sm text-gray-600 hover:text-[#e21b22] hover:bg-gray-50 transition-colors"
+                >
+                  {cat}
+                </Link>
+              </li>
+            ))}
+            <li className="px-6 py-4 mt-2 border-t border-gray-100 flex items-center justify-between text-sm font-medium text-gray-700">
+              <span className="flex items-center gap-2"><User className="w-4 h-4" /> Login / Register</span>
+            </li>
+          </ul>
+        </div>
+      )}
+
       {/* Floating Chat Button */}
       <div className="fixed bottom-6 right-6 z-50 group">
         <div className="absolute bottom-16 right-0 bg-white p-3 rounded-lg shadow-xl border border-gray-100 w-48 text-xs font-medium text-gray-700 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
