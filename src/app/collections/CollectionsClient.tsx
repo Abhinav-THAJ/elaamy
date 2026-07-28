@@ -20,24 +20,44 @@ export default function CollectionsClient() {
 
   useEffect(() => {
     setLoading(true);
-    const params: Record<string, string> = { per_page: "50" };
-    if (categoryId) params.category = categoryId;
-    if (searchQuery) params.search = searchQuery;
 
-    Promise.all([
-      fetchWooClient("products", params),
-      fetchWooClient("products/categories", { per_page: "100" }),
-    ])
-      .then(([productsData, categoriesData]) => {
+    const fetchCollections = async () => {
+      try {
+        // Fetch all categories first
+        const categoriesData = await fetchWooClient("products/categories", { per_page: "100" });
+        const cats = Array.isArray(categoriesData) ? categoriesData : [];
+        setCategories(cats);
+
+        const params: Record<string, string> = { per_page: "50" };
+        if (searchQuery) params.search = searchQuery;
+
+        // If categoryId is provided (e.g. from Header links like "Wedding"), try to find its numerical ID
+        if (categoryId) {
+          const matchedCat = cats.find(c => 
+            String(c.id) === categoryId || 
+            c.name.toLowerCase().includes(categoryId.toLowerCase()) || 
+            c.slug.toLowerCase().includes(categoryId.toLowerCase())
+          );
+          
+          if (matchedCat) {
+            params.category = String(matchedCat.id);
+          } else {
+            // If category string isn't found, we can just search for it or pass it (though Woo API expects ID)
+            params.search = categoryId; // fallback to searching the keyword
+          }
+        }
+
+        const productsData = await fetchWooClient("products", params);
         setProducts(Array.isArray(productsData) ? productsData : []);
-        setCategories(Array.isArray(categoriesData) ? categoriesData : []);
-        setLoading(false);
-      })
-      .catch(() => {
+      } catch (error) {
         setProducts([]);
         setCategories([]);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchCollections();
   }, [categoryId, searchQuery]);
 
   return (
