@@ -109,15 +109,34 @@ export function Header() {
           </div>
 
           {/* Right Actions */}
-          <div className="hidden md:flex items-center gap-6 text-[13px] text-gray-700 font-medium">
-            <Link href="#" className="hover:text-[#e21b22] transition-colors">Special Offers</Link>
-            <Link href="#" className="hover:text-[#e21b22] transition-colors flex items-center gap-1">More <ChevronDown className="w-3 h-3" /></Link>
-            <Link href="#" className="hover:text-[#e21b22] transition-colors flex items-center gap-1"><Globe className="w-4 h-4 text-gray-500" /> English <ChevronDown className="w-3 h-3" /></Link>
+          <div className="hidden md:flex items-center gap-6 text-[13px] text-gray-700 font-medium z-50">
+            <Link href="/collections" className="hover:text-[#e21b22] transition-colors">Special Offers</Link>
             
-            <div className="flex items-center gap-1.5 cursor-pointer hover:text-[#e21b22] transition-colors">
+            <div className="relative group cursor-pointer h-full">
+              <div className="hover:text-[#e21b22] transition-colors flex items-center gap-1 py-4">
+                More <ChevronDown className="w-3 h-3 group-hover:rotate-180 transition-transform" />
+              </div>
+              <div className="absolute top-[80%] left-0 bg-white shadow-xl border border-gray-100 rounded-lg p-2 min-w-[150px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                <Link href="/about" className="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-[#e21b22] rounded-md transition-colors">About Us</Link>
+                <Link href="/contact" className="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-[#e21b22] rounded-md transition-colors">Contact</Link>
+                <Link href="/collections" className="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-[#e21b22] rounded-md transition-colors">All Products</Link>
+              </div>
+            </div>
+
+            <div className="relative group cursor-pointer h-full">
+              <div className="hover:text-[#e21b22] transition-colors flex items-center gap-1 py-4">
+                <Globe className="w-4 h-4 text-gray-500" /> English <ChevronDown className="w-3 h-3 group-hover:rotate-180 transition-transform" />
+              </div>
+              <div className="absolute top-[80%] left-0 bg-white shadow-xl border border-gray-100 rounded-lg p-2 min-w-[120px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                <div className="px-3 py-2 font-bold text-[#e21b22] bg-red-50 rounded-md">English</div>
+                <div className="px-3 py-2 hover:bg-gray-50 text-gray-400 cursor-not-allowed rounded-md">Arabic (Soon)</div>
+              </div>
+            </div>
+            
+            <Link href="/checkout" className="flex items-center gap-1.5 cursor-pointer hover:text-[#e21b22] transition-colors">
               <User className="w-5 h-5 text-gray-500" />
               <span>Login</span>
-            </div>
+            </Link>
             
             <button 
               onClick={() => setIsCartOpen(true)}
@@ -131,7 +150,7 @@ export function Header() {
               </div>
               <div className="flex flex-col text-left text-xs">
                 <span className="text-gray-400">Cart</span>
-                <span className="font-bold text-gray-800">₹0.00</span>
+                <span className="font-bold text-gray-800">₹{cart.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2)}</span>
               </div>
             </button>
           </div>
