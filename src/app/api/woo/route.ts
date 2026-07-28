@@ -20,8 +20,9 @@ export async function GET(request: Request) {
   try {
     const data = await fetchWooData(endpoint, params);
     return NextResponse.json(data);
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch WooCommerce data' }, { status: 500 });
+  } catch (error: any) {
+    console.error('WooCommerce API GET Error:', error?.response?.data || error);
+    return NextResponse.json({ error: 'Failed to fetch WooCommerce data', details: error?.response?.data || error.message }, { status: 500 });
   }
 }
 

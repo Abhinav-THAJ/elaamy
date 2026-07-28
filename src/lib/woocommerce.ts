@@ -14,7 +14,7 @@ export async function fetchWooData(endpoint: string, params: any = {}) {
     return response.data;
   } catch (error) {
     console.error(`Error fetching ${endpoint}:`, error);
-    return [];
+    throw error;
   }
 }
 
