@@ -138,16 +138,18 @@ export function Header() {
             {topCategories.map((cat, idx) => (
               <li 
                 key={idx}
-                className={`py-3.5 px-2 cursor-pointer border-b-2 transition-colors ${cat === 'All Products' ? 'border-[#6c2bd9] text-[#6c2bd9]' : 'border-transparent hover:text-[#e21b22] hover:border-[#e21b22]'}`}
+                className={`cursor-pointer border-b-2 transition-colors ${cat === 'All Products' ? 'border-[#6c2bd9] text-[#6c2bd9]' : 'border-transparent hover:text-[#e21b22] hover:border-[#e21b22]'}`}
                 onMouseEnter={() => cat === "All Products" && setShowMegaMenu(true)}
                 onMouseLeave={() => cat === "All Products" && setShowMegaMenu(false)}
               >
                 {cat === "All Products" ? (
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 py-3.5 px-2">
                     <Menu className="w-4 h-4" /> {cat}
                   </div>
                 ) : (
-                  cat
+                  <Link href={`/collections?category=${cat}`} className="block py-3.5 px-2">
+                    {cat}
+                  </Link>
                 )}
                 
                 {/* Mega Menu Dropdown */}
@@ -242,7 +244,7 @@ export function Header() {
         <div className="container mx-auto px-4 lg:px-8">
           <ul className="flex items-center justify-center gap-6 lg:gap-10 overflow-x-auto no-scrollbar px-2 pb-2">
             {subCategories.map((sub, idx) => (
-              <li 
+              <Link href={`/collections?category=${sub.name}`}
                 key={idx} 
                 className="group flex flex-col items-center gap-3 cursor-pointer flex-shrink-0"
               >
@@ -262,7 +264,7 @@ export function Header() {
                 <span className="text-[13px] font-bold text-gray-600 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-pink-600 group-hover:to-purple-600 transition-all duration-300 whitespace-nowrap">
                   {sub.name}
                 </span>
-              </li>
+              </Link>
             ))}
           </ul>
         </div>
