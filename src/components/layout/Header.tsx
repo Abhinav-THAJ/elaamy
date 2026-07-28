@@ -14,14 +14,29 @@ export function Header() {
   const { cart, setIsCartOpen } = useCart();
   const [showMegaMenu, setShowMegaMenu] = useState(false);
 
+  // Sync the search query state with the URL when it changes on client-side only
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      const query = urlParams.get("search");
+      if (query) {
+        setSearchQuery(query);
+      } else {
+        setSearchQuery("");
+      }
+    }
+  }, []);
+
   const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       router.push(`/collections?search=${encodeURIComponent(searchQuery.trim())}`);
-      setMobileMenuOpen(false);
+    } else {
+      router.push(`/collections`);
     }
+    setMobileMenuOpen(false);
   };
 
   useEffect(() => {
