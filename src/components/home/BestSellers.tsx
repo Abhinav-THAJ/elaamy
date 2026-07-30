@@ -2,36 +2,53 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Heart, ShoppingBag } from "lucide-react";
+import { Heart, ShoppingBag, Star } from "lucide-react";
+import { useCart } from "@/components/CartContext";
 
 export function BestSellers({ products = [] }: { products?: any[] }) {
+  const { addToCart } = useCart();
   if (!products || products.length === 0) return null;
 
-  const displayProducts = products.slice(0, 4).map(p => ({
+  const displayProducts = products.slice(0, 8).map(p => ({
     id: p.id,
     name: p.name,
+    price: parseFloat(p.price || p.regular_price || "0"),
     price_html: p.price_html || `<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">₹</span>${p.price || 0}</bdi></span>`,
     image: p.images?.[0]?.src || "/images/custom-wedding-card.png",
     sale: p.on_sale,
+    rating: parseFloat(p.average_rating || "4.5"),
+    sold: p.total_sales || Math.floor(Math.random() * 500 + 50),
   }));
 
   return (
-    <section className="py-10 bg-white">
-      <div className="container mx-auto px-4 lg:px-8">
-        <h2 className="text-2xl font-bold text-center text-gray-900 mb-8 tracking-wide uppercase">
-          Our Best Sellers
-        </h2>
+    <section className="py-12 bg-white">
+      <div className="container mx-auto px-4 lg:px-8 max-w-7xl">
+        {/* Section Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-widest text-[#e21b22] mb-1">Top Picks</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
+              Our Best Sellers
+            </h2>
+          </div>
+          <Link href="/collections" className="text-sm font-semibold text-gray-500 hover:text-[#e21b22] transition-colors flex items-center gap-1">
+            View All <span>›</span>
+          </Link>
+        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
           {displayProducts.map((product) => (
-            <div key={product.id} className="group cursor-pointer">
-              <Link href={`/product/${product.id}`} className="block relative aspect-square bg-[#F8F9FA] rounded-lg overflow-hidden mb-4 border border-gray-100">
+            <div key={product.id} className="group cursor-pointer bg-white border border-gray-100 rounded-xl hover:border-pink-200 hover:shadow-lg transition-all duration-300">
+              <Link href={`/product/${product.id}`} className="block relative aspect-square bg-[#F8F9FA] rounded-t-xl overflow-hidden">
                 {product.sale && (
-                  <span className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded z-10">
-                    Sale
+                  <span className="absolute top-2 left-2 bg-[#e21b22] text-white text-[9px] font-bold px-2 py-0.5 rounded-full z-10">
+                    SALE
                   </span>
                 )}
-                <button className="absolute top-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center text-gray-400 hover:text-pink-500 hover:shadow-md transition-all z-10" onClick={(e) => e.preventDefault()}>
+                <button
+                  className="absolute top-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center text-gray-400 hover:text-pink-500 hover:shadow-md transition-all z-10 opacity-0 group-hover:opacity-100"
+                  onClick={(e) => e.preventDefault()}
+                >
                   <Heart className="w-4 h-4" />
                 </button>
                 <Image
@@ -39,21 +56,42 @@ export function BestSellers({ products = [] }: { products?: any[] }) {
                   alt={product.name}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                 />
               </Link>
-              <Link href={`/product/${product.id}`}>
-                <h3 className="text-sm font-semibold text-gray-800 line-clamp-2 mb-2 group-hover:text-pink-600 transition-colors">
-                  {product.name}
-                </h3>
-              </Link>
-              <div className="flex items-center justify-between mt-2">
-                <div 
-                  className="text-red-600 font-bold [&_del]:text-gray-400 [&_del]:text-sm [&_del]:line-through [&_del]:font-normal flex gap-2 items-center"
-                  dangerouslySetInnerHTML={{ __html: product.price_html }}
-                />
-                <button className="w-8 h-8 rounded-full flex items-center justify-center border border-gray-200 text-gray-500 hover:bg-pink-500 hover:text-white hover:border-pink-500 transition-colors">
-                  <ShoppingBag className="w-4 h-4" />
-                </button>
+              <div className="p-3">
+                <Link href={`/product/${product.id}`}>
+                  <h3 className="text-sm font-semibold text-gray-800 line-clamp-2 mb-1 group-hover:text-pink-600 transition-colors min-h-[40px]">
+                    {product.name}
+                  </h3>
+                </Link>
+                {/* Rating */}
+                <div className="flex items-center gap-1 mb-2">
+                  <div className="flex text-yellow-400">
+                    {[1,2,3,4,5].map(s => (
+                      <Star key={s} className={`w-3 h-3 ${s <= Math.round(product.rating) ? 'fill-yellow-400' : 'text-gray-200'}`} />
+                    ))}
+                  </div>
+                  <span className="text-[10px] text-gray-400">({product.sold})</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div
+                    className="text-[#e21b22] font-bold text-sm [&_del]:text-gray-400 [&_del]:text-xs [&_del]:line-through [&_del]:font-normal flex gap-1.5 items-center flex-wrap"
+                    dangerouslySetInnerHTML={{ __html: product.price_html }}
+                  />
+                  <button
+                    onClick={() => addToCart({
+                      id: String(product.id),
+                      name: product.name,
+                      price: product.price,
+                      image: product.image,
+                      quantity: 1
+                    })}
+                    className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-50 border border-gray-200 text-gray-500 hover:bg-[#e21b22] hover:text-white hover:border-[#e21b22] transition-colors"
+                  >
+                    <ShoppingBag className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
             </div>
           ))}

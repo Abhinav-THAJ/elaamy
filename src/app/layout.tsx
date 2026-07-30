@@ -31,8 +31,14 @@ const script = Great_Vibes({
 });
 
 export const metadata = {
-  title: "Elaamy | Premium Gifting",
-  description: "Find Something You Love for Someone You Love ❤️",
+  title: "Elaamy | Premium Custom Gifts & Printing",
+  description: "Personalized gifts, wedding cards, corporate gifts, photo frames & custom printing. Find something you love for someone you love. ❤️",
+  keywords: "custom gifts, wedding cards, photo frames, mementos, corporate gifts, personalized printing",
+  openGraph: {
+    title: "Elaamy | Premium Custom Gifts & Printing",
+    description: "Personalized gifts, wedding cards, photo frames & custom printing",
+    type: "website",
+  },
 };
 
 import { CartSidebar } from "@/components/CartSidebar";

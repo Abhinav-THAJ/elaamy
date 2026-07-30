@@ -1,5 +1,6 @@
 // Server-side WooCommerce fetcher using native fetch + Basic Auth
 // This is more reliable than the @woocommerce/woocommerce-rest-api package on Vercel
+import { getCorrectImage } from "./woocommerce-client";
 
 const WOO_URL = (process.env.NEXT_PUBLIC_WOO_URL || "").replace(/\/$/, "");
 const WOO_KEY = process.env.WOO_CONSUMER_KEY || process.env.NEXT_PUBLIC_WOO_CONSUMER_KEY || "";
@@ -32,8 +33,19 @@ export async function fetchWooData(endpoint: string, params: Record<string, any>
       return [];
     }
 
-    const data = await res.json();
-    return Array.isArray(data) ? data : [];
+    const rawData = await res.json();
+    const data = Array.isArray(rawData) ? rawData : [];
+    
+    // Fix images in products response
+    return data.map((item: any) => {
+      if (item.images && Array.isArray(item.images)) {
+        item.images = item.images.map((img: any) => ({
+          ...img,
+          src: getCorrectImage(img.src)
+        }));
+      }
+      return item;
+    });
   } catch (error) {
     console.error(`Error fetching WooCommerce ${endpoint}:`, error);
     return [];

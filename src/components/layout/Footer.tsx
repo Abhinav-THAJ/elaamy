@@ -74,11 +74,12 @@ export function Footer() {
           <div>
             <h4 className="text-sm font-bold text-gray-900 mb-4">Shop Categories</h4>
             <ul className="space-y-2.5 text-xs text-gray-500">
-              {["Wedding Cards", "Mementos & Awards", "Corporate Gifts", "Business Stationery", "Packaging", "Stickers"].map((item) => (
-                <li key={item}>
-                  <Link href="#" className="hover:text-pink-500 transition-colors">{item}</Link>
-                </li>
-              ))}
+              <li><Link href="/collections?category=Wedding" className="hover:text-pink-500 transition-colors">Wedding Cards</Link></li>
+              <li><Link href="/collections?category=Mementos" className="hover:text-pink-500 transition-colors">Mementos &amp; Awards</Link></li>
+              <li><Link href="/collections?category=Corporate" className="hover:text-pink-500 transition-colors">Corporate Gifts</Link></li>
+              <li><Link href="/collections?category=Stationery" className="hover:text-pink-500 transition-colors">Business Stationery</Link></li>
+              <li><Link href="/collections?category=Packaging" className="hover:text-pink-500 transition-colors">Packaging</Link></li>
+              <li><Link href="/collections?category=Stickers" className="hover:text-pink-500 transition-colors">Stickers</Link></li>
             </ul>
           </div>
 
@@ -86,11 +87,11 @@ export function Footer() {
           <div>
             <h4 className="text-sm font-bold text-gray-900 mb-4">Customer Service</h4>
             <ul className="space-y-2.5 text-xs text-gray-500">
-              {["Track Order", "Shipping & Returns", "FAQ", "Contact Us", "Terms & Conditions", "Privacy Policy"].map((item) => (
-                <li key={item}>
-                  <Link href="#" className="hover:text-pink-500 transition-colors">{item}</Link>
-                </li>
-              ))}
+              <li><Link href="/orders" className="hover:text-pink-500 transition-colors">Track Order</Link></li>
+              <li><Link href="/contact" className="hover:text-pink-500 transition-colors">Contact Us</Link></li>
+              <li><Link href="/auth/login" className="hover:text-pink-500 transition-colors">My Account</Link></li>
+              <li><Link href="/checkout" className="hover:text-pink-500 transition-colors">Checkout</Link></li>
+              <li><Link href="/about" className="hover:text-pink-500 transition-colors">About Us</Link></li>
             </ul>
           </div>
 

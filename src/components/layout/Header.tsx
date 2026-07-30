@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import NextImage from "next/image";
 import { useRouter } from "next/navigation";
-import { Search, ShoppingCart, User, ChevronDown, Menu, X, Phone, Globe, Gift, Camera, BookOpen, Trophy, Mail, Briefcase, Package, Stamp } from "lucide-react";
+import { Search, ShoppingCart, User, ChevronDown, Menu, X, Globe, Tag, LogIn, Package } from "lucide-react";
 import { useCart } from "@/components/CartContext";
+import { fetchWooClient } from "@/lib/woocommerce-client";
 
 export function Header() {
   const router = useRouter();
@@ -13,6 +14,22 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { cart, setIsCartOpen } = useCart();
   const [showMegaMenu, setShowMegaMenu] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [tagSearch, setTagSearch] = useState("");
+  const [showTagDropdown, setShowTagDropdown] = useState(false);
+  const tagRef = useRef<HTMLDivElement>(null);
+
+  // Fetch categories for nav
+  useEffect(() => {
+    fetchWooClient("products/categories", { per_page: "50", hide_empty: "true" })
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setCategories(data.filter((c: any) => c.name !== "Uncategorized").slice(0, 8));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Sync the search query state with the URL when it changes on client-side only
   useEffect(() => {
@@ -27,6 +44,24 @@ export function Header() {
     }
   }, []);
 
+  // Detect scroll for sticky header styling
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Close tag dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (tagRef.current && !tagRef.current.contains(e.target as Node)) {
+        setShowTagDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -37,48 +72,40 @@ export function Header() {
       router.push(`/collections`);
     }
     setMobileMenuOpen(false);
+    setShowTagDropdown(false);
+  };
+
+  const handleTagSearch = (tag: string) => {
+    router.push(`/collections?tag=${encodeURIComponent(tag)}`);
+    setShowTagDropdown(false);
+    setTagSearch("");
+    setMobileMenuOpen(false);
   };
 
   useEffect(() => {
     setMobileMenuOpen(false);
   }, []);
 
-  const topCategories = [
-    "All Products", "Wedding Cards", "Photo Frames", "Mementos", "Letter Pads", "Corporate Gifts", "Custom Printing", "Stickers"
+  const topCategories = categories.length > 0
+    ? categories.map(c => c.name)
+    : ["All Products", "Wedding Cards", "Photo Frames", "Mementos", "Letter Pads", "Corporate Gifts", "Custom Printing", "Stickers"];
+
+  const popularTags = [
+    "Wedding", "Birthday", "Anniversary", "Corporate", "Photo", "Custom", "Gift", "Personalized",
+    "Bulk Order", "Premium", "Sticker", "Memento", "Trophy", "Award", "Invitation"
   ];
 
-  const subCategories = [
-    { name: "Personalized Gifts", image: "https://loremflickr.com/200/200/giftbox" },
-    { name: "Wedding Cards", image: "https://loremflickr.com/200/200/wedding,card" },
-    { name: "Mementos & Awards", image: "https://loremflickr.com/200/200/trophy" },
-    { name: "Photo Gifts", image: "https://loremflickr.com/200/200/polaroid" },
-    { name: "Business Stationery", image: "https://loremflickr.com/200/200/stationery" },
-    { name: "Packaging", image: "https://loremflickr.com/200/200/cardboard,box" },
-    { name: "Corporate Combos", image: "https://loremflickr.com/200/200/diary,pen" },
-    { name: "Stickers", image: "https://loremflickr.com/200/200/stickers" },
-  ];
+  const filteredTags = tagSearch
+    ? popularTags.filter(t => t.toLowerCase().includes(tagSearch.toLowerCase()))
+    : popularTags;
+
+
 
   return (
-    <header className="w-full z-50 bg-white shadow-sm relative">
-      {/* Top Black Banner */}
-      <div className="bg-[#1e1e1e] text-white text-[11px] py-1.5 px-4 flex justify-between items-center tracking-wide">
-        <div className="flex gap-4">
-          <span className="hidden sm:flex items-center gap-2">
-            <Phone className="w-3 h-3" /> Need Help? Talk to us 24/7
-          </span>
-        </div>
-        <div className="flex items-center gap-4 text-gray-300">
-          <Link href="#" className="hover:text-white transition-colors">Track order</Link>
-          <span className="text-gray-600">|</span>
-          <Link href="#" className="hover:text-white transition-colors">Bulk order</Link>
-          <span className="text-gray-600">|</span>
-          <Link href="#" className="hover:text-white transition-colors text-[#f16334]">Sell on ELAAMY</Link>
-        </div>
-      </div>
-
+    <header className={`w-full z-50 bg-white sticky top-0 transition-shadow duration-300 ${scrolled ? "shadow-md" : "shadow-sm"}`}>
       {/* Main Header Area */}
-      <div className="py-4 border-b border-gray-100">
-        <div className="container mx-auto px-4 lg:px-8 flex items-center justify-between gap-6 lg:gap-10">
+      <div className="py-1.5 border-b border-gray-100">
+        <div className="container mx-auto px-4 lg:px-8 flex items-center justify-between gap-4 lg:gap-8">
           
           {/* Logo */}
           <Link href="/" className="flex-shrink-0 flex items-center">
@@ -87,56 +114,68 @@ export function Header() {
               alt="Elaamy Logo" 
               width={140} 
               height={50} 
-              className="object-contain w-24 sm:w-28 h-auto" 
+              className="object-contain w-20 sm:w-28 h-auto" 
               priority
             />
           </Link>
 
-          {/* Search Bar */}
-          <div className="hidden md:flex flex-1 max-w-2xl relative">
-            <form onSubmit={handleSearch} className="w-full flex shadow-sm rounded-md overflow-hidden">
+          {/* Search Bar with Tag Dropdown */}
+          <div className="hidden md:flex flex-1 max-w-2xl relative" ref={tagRef}>
+            <form onSubmit={handleSearch} className="w-full flex shadow-sm rounded-md overflow-visible border border-gray-200 relative">
+              {/* Tag Search Button */}
+              <button
+                type="button"
+                onClick={() => setShowTagDropdown(!showTagDropdown)}
+                className="bg-gray-50 border-r border-gray-200 px-3 py-2 flex items-center gap-1.5 text-xs text-gray-500 font-medium hover:bg-gray-100 transition-colors flex-shrink-0 whitespace-nowrap"
+              >
+                <Tag className="w-3.5 h-3.5 text-[#e21b22]" />
+                <span>Tags</span>
+                <ChevronDown className="w-3 h-3" />
+              </button>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search in products (e.g., Wedding Cards, Mementos)..."
-                className="w-full pl-4 pr-4 py-2 bg-gray-50 border border-gray-200 border-r-0 text-sm focus:outline-none focus:bg-white transition-colors"
+                placeholder="Search products (e.g. Wedding Cards, Mementos)..."
+                className="w-full pl-4 pr-4 py-2 bg-white text-sm focus:outline-none transition-colors"
               />
-              <button type="submit" className="bg-[#e21b22] text-white px-8 py-2 font-medium hover:bg-red-700 transition-colors">
-                Search
+              <button type="submit" className="bg-[#e21b22] text-white px-6 py-2 font-medium hover:bg-red-700 transition-colors flex-shrink-0">
+                <Search className="w-4 h-4" />
               </button>
             </form>
+
+            {/* Tag dropdown */}
+            {showTagDropdown && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-xl z-50 p-4">
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    value={tagSearch}
+                    onChange={(e) => setTagSearch(e.target.value)}
+                    placeholder="Filter tags..."
+                    className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-pink-100"
+                    autoFocus
+                  />
+                </div>
+                <p className="text-xs text-gray-400 mb-2 uppercase tracking-wider font-medium">Popular Tags</p>
+                <div className="flex flex-wrap gap-2">
+                  {filteredTags.map((tag) => (
+                    <button
+                      key={tag}
+                      onClick={() => handleTagSearch(tag)}
+                      className="px-3 py-1 bg-gray-50 text-gray-600 rounded-full text-xs font-medium hover:bg-pink-50 hover:text-pink-600 border border-gray-100 hover:border-pink-200 transition-colors"
+                    >
+                      #{tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Right Actions */}
-          <div className="hidden md:flex items-center gap-6 text-[13px] text-gray-700 font-medium z-50">
-            <Link href="/collections" className="hover:text-[#e21b22] transition-colors">Special Offers</Link>
-            
-            <div className="relative group cursor-pointer h-full">
-              <div className="hover:text-[#e21b22] transition-colors flex items-center gap-1 py-4">
-                More <ChevronDown className="w-3 h-3 group-hover:rotate-180 transition-transform" />
-              </div>
-              <div className="absolute top-[80%] left-0 bg-white shadow-xl border border-gray-100 rounded-lg p-2 min-w-[150px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                <Link href="/about" className="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-[#e21b22] rounded-md transition-colors">About Us</Link>
-                <Link href="/contact" className="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-[#e21b22] rounded-md transition-colors">Contact</Link>
-                <Link href="/collections" className="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-[#e21b22] rounded-md transition-colors">All Products</Link>
-              </div>
-            </div>
+          <div className="hidden md:flex items-center gap-5 text-[13px] text-gray-700 font-medium z-50">
 
-            <div className="relative group cursor-pointer h-full">
-              <div className="hover:text-[#e21b22] transition-colors flex items-center gap-1 py-4">
-                <Globe className="w-4 h-4 text-gray-500" /> English <ChevronDown className="w-3 h-3 group-hover:rotate-180 transition-transform" />
-              </div>
-              <div className="absolute top-[80%] left-0 bg-white shadow-xl border border-gray-100 rounded-lg p-2 min-w-[120px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                <div className="px-3 py-2 font-bold text-[#e21b22] bg-red-50 rounded-md">English</div>
-                <div className="px-3 py-2 hover:bg-gray-50 text-gray-400 cursor-not-allowed rounded-md">Arabic (Soon)</div>
-              </div>
-            </div>
-            
-            <Link href="/checkout" className="flex items-center gap-1.5 cursor-pointer hover:text-[#e21b22] transition-colors">
-              <User className="w-5 h-5 text-gray-500" />
-              <span>Login</span>
-            </Link>
             
             <button 
               onClick={() => setIsCartOpen(true)}
@@ -144,169 +183,143 @@ export function Header() {
             >
               <div className="relative">
                 <ShoppingCart className="w-6 h-6 text-gray-500" />
-                <span className="absolute -top-1.5 -right-1.5 bg-[#e21b22] text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full shadow-sm">
-                  {cartItemCount}
-                </span>
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 bg-[#e21b22] text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full shadow-sm">
+                    {cartItemCount}
+                  </span>
+                )}
               </div>
               <div className="flex flex-col text-left text-xs">
                 <span className="text-gray-400">Cart</span>
-                <span className="font-bold text-gray-800">₹{cart.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2)}</span>
+                <span className="font-bold text-gray-800">₹{cart.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(0)}</span>
               </div>
             </button>
           </div>
 
-          {/* Mobile Menu Toggle */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden text-gray-700"
-          >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          {/* Mobile: Cart + Menu */}
+          <div className="md:hidden flex items-center gap-3">
+            <button onClick={() => setIsCartOpen(true)} className="relative">
+              <ShoppingCart className="w-6 h-6 text-gray-700" />
+              {cartItemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-[#e21b22] text-white text-[9px] font-bold w-3.5 h-3.5 flex items-center justify-center rounded-full">
+                  {cartItemCount}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="text-gray-700 p-1"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Main Navigation (Desktop) */}
-      <div className="hidden md:block relative border-b border-gray-100">
+      <div className="hidden md:block border-b border-gray-100 bg-white">
         <div className="container mx-auto px-4 lg:px-8">
-          <ul className="flex items-center justify-between text-[13px] font-bold text-gray-700">
-            {topCategories.map((cat, idx) => (
-              <li 
-                key={idx}
-                className={`cursor-pointer border-b-2 transition-colors ${cat === 'All Products' ? 'border-[#6c2bd9] text-[#6c2bd9]' : 'border-transparent hover:text-[#e21b22] hover:border-[#e21b22]'}`}
-                onMouseEnter={() => cat === "All Products" && setShowMegaMenu(true)}
-                onMouseLeave={() => cat === "All Products" && setShowMegaMenu(false)}
-              >
-                {cat === "All Products" ? (
-                  <div className="flex items-center gap-1.5 py-3.5 px-2">
-                    <Menu className="w-4 h-4" /> {cat}
-                  </div>
-                ) : (
-                  <Link href={`/collections?category=${cat}`} className="block py-3.5 px-2">
-                    {cat}
-                  </Link>
-                )}
-                
-                {/* Mega Menu Dropdown */}
-                {cat === "All Products" && showMegaMenu && (
-                  <div className="absolute left-0 top-full w-full bg-white shadow-2xl border-t border-gray-200 z-50 p-8 flex justify-center">
-                    <div className="w-full max-w-7xl grid grid-cols-6 gap-6 text-left">
-                      {/* Column 1 */}
-                      <div>
-                        <h4 className="text-[#6c2bd9] font-bold mb-4 pb-1 border-b border-gray-100 text-sm">Best Sellers</h4>
-                        <ul className="space-y-2.5 text-gray-600 text-[13px] flex flex-col">
-                          <Link href="/collections?category=Wedding" className="hover:text-[#6c2bd9] transition-colors">Wedding Cards</Link>
-                          <Link href="/collections?category=Photo" className="hover:text-[#6c2bd9] transition-colors">Acrylic Photo Frames</Link>
-                          <Link href="/collections?category=Mementos" className="hover:text-[#6c2bd9] transition-colors">Premium Mementos</Link>
-                          <Link href="/collections?category=Stationery" className="hover:text-[#6c2bd9] transition-colors">Custom Letter Pads</Link>
-                          <Link href="/collections?category=Stickers" className="hover:text-[#6c2bd9] transition-colors">Stickers &amp; Labels</Link>
-                          <Link href="/collections?category=Corporate" className="hover:text-[#6c2bd9] transition-colors">Corporate Gift Sets</Link>
-                          <Link href="/collections?category=Stationery" className="hover:text-[#6c2bd9] transition-colors">Custom Folders</Link>
-                        </ul>
-                      </div>
-                      {/* Column 2 */}
-                      <div>
-                        <h4 className="text-gray-800 font-bold mb-4 pb-1 border-b border-gray-100 text-sm">Browse Category By</h4>
-                        <ul className="space-y-2.5 text-gray-600 text-[13px] flex flex-col">
-                          <Link href="/collections?category=Wedding" className="hover:text-[#6c2bd9] transition-colors">Wedding Cards</Link>
-                          <Link href="/collections?category=Mementos" className="hover:text-[#6c2bd9] transition-colors">Mementos &amp; Awards</Link>
-                          <Link href="/collections?category=Photo" className="hover:text-[#6c2bd9] transition-colors">Photo Gifts</Link>
-                          <Link href="/collections?category=Stationery" className="hover:text-[#6c2bd9] transition-colors">Business Stationery</Link>
-                          <Link href="/collections?category=Stickers" className="hover:text-[#6c2bd9] transition-colors">Stickers</Link>
-                          <Link href="/collections?category=Packaging" className="hover:text-[#6c2bd9] transition-colors">Packaging</Link>
-                        </ul>
-                      </div>
-                      {/* Column 3 */}
-                      <div>
-                        <h4 className="text-gray-800 font-bold mb-4 pb-1 border-b border-gray-100 text-sm">Wedding Cards</h4>
-                        <ul className="space-y-2.5 text-gray-600 text-[13px] flex flex-col">
-                          <Link href="/collections?category=Wedding" className="hover:text-[#6c2bd9] transition-colors font-medium text-[#6c2bd9]">View All &gt;</Link>
-                          <Link href="/collections?category=Wedding" className="hover:text-[#6c2bd9] transition-colors">Premium Wedding Cards</Link>
-                          <Link href="/collections?category=Wedding" className="hover:text-[#6c2bd9] transition-colors">Designer Invitations</Link>
-                          <Link href="/collections?category=Wedding" className="hover:text-[#6c2bd9] transition-colors">Ring Bound Cards</Link>
-                        </ul>
-                        <h4 className="text-gray-800 font-bold mt-6 mb-4 pb-1 border-b border-gray-100 text-sm">Photo Gifts</h4>
-                        <ul className="space-y-2.5 text-gray-600 text-[13px] flex flex-col">
-                          <Link href="/collections?category=Photo" className="hover:text-[#6c2bd9] transition-colors font-medium text-[#6c2bd9]">View All &gt;</Link>
-                          <Link href="/collections?category=Photo" className="hover:text-[#6c2bd9] transition-colors">Acrylic Photo Frames</Link>
-                          <Link href="/collections?category=Photo" className="hover:text-[#6c2bd9] transition-colors">Custom Canvas Prints</Link>
-                        </ul>
-                      </div>
-                      {/* Column 4 */}
-                      <div>
-                        <h4 className="text-gray-800 font-bold mb-4 pb-1 border-b border-gray-100 text-sm">Mementos &amp; Awards</h4>
-                        <ul className="space-y-2.5 text-gray-600 text-[13px] flex flex-col">
-                          <Link href="/collections?category=Mementos" className="hover:text-[#6c2bd9] transition-colors font-medium text-[#6c2bd9]">View All &gt;</Link>
-                          <Link href="/collections?category=Mementos" className="hover:text-[#6c2bd9] transition-colors">Premium Mementos</Link>
-                          <Link href="/collections?category=Mementos" className="hover:text-[#6c2bd9] transition-colors">Glass Mementos</Link>
-                          <Link href="/collections?category=Mementos" className="hover:text-[#6c2bd9] transition-colors">Trophies</Link>
-                          <Link href="/collections?category=Mementos" className="hover:text-[#6c2bd9] transition-colors">Wooden Awards</Link>
-                        </ul>
-                      </div>
-                      {/* Column 5 */}
-                      <div>
-                        <h4 className="text-gray-800 font-bold mb-4 pb-1 border-b border-gray-100 text-sm">Business Stationery</h4>
-                        <ul className="space-y-2.5 text-gray-600 text-[13px] flex flex-col">
-                          <Link href="/collections?category=Stationery" className="hover:text-[#6c2bd9] transition-colors font-medium text-[#6c2bd9]">View All &gt;</Link>
-                          <Link href="/collections?category=Stationery" className="hover:text-[#6c2bd9] transition-colors">Custom Letter Pads</Link>
-                          <Link href="/collections?category=Stationery" className="hover:text-[#6c2bd9] transition-colors">Custom Folders</Link>
-                          <Link href="/collections?category=Stationery" className="hover:text-[#6c2bd9] transition-colors">Business Cards</Link>
-                          <Link href="/collections?category=Stationery" className="hover:text-[#6c2bd9] transition-colors">Letterheads</Link>
-                        </ul>
-                      </div>
-                      {/* Column 6 */}
-                      <div>
-                        <h4 className="text-gray-800 font-bold mb-4 pb-1 border-b border-gray-100 text-sm">Packaging &amp; Stickers</h4>
-                        <ul className="space-y-2.5 text-gray-600 text-[13px] flex flex-col">
-                          <Link href="/collections?category=Packaging" className="hover:text-[#6c2bd9] transition-colors font-medium text-[#6c2bd9]">View All &gt;</Link>
-                          <Link href="/collections?category=Stickers" className="hover:text-[#6c2bd9] transition-colors">Custom Stickers</Link>
-                          <Link href="/collections?category=Stickers" className="hover:text-[#6c2bd9] transition-colors">Product Labels</Link>
-                          <Link href="/collections?category=Packaging" className="hover:text-[#6c2bd9] transition-colors">Packaging Boxes</Link>
-                          <Link href="/collections?category=Packaging" className="hover:text-[#6c2bd9] transition-colors">Carry Bags</Link>
-                        </ul>
+          <ul className="flex items-center gap-1 text-[13px] font-semibold text-gray-700 overflow-x-auto">
+            {/* All Products with Mega Menu */}
+            <li
+              className="cursor-pointer flex-shrink-0"
+              onMouseEnter={() => setShowMegaMenu(true)}
+              onMouseLeave={() => setShowMegaMenu(false)}
+            >
+              <div className="flex items-center gap-1.5 py-2 px-3 hover:text-[#6c2bd9] border-b-2 border-[#6c2bd9] text-[#6c2bd9]">
+                <Menu className="w-3.5 h-3.5" />
+                All Products
+                <ChevronDown className="w-3 h-3" />
+              </div>
+
+              {/* Mega Menu */}
+              {showMegaMenu && (
+                <div className="absolute left-0 top-full w-full bg-white shadow-2xl border-t border-gray-200 z-50 p-8">
+                  <div className="container mx-auto max-w-7xl grid grid-cols-4 gap-8 text-left">
+                    <div>
+                      <h4 className="text-[#6c2bd9] font-bold mb-4 pb-1 border-b border-gray-100 text-sm">Best Sellers</h4>
+                      <ul className="space-y-2.5 text-gray-600 text-[13px] flex flex-col">
+                        <Link href="/collections?category=Wedding" className="hover:text-[#6c2bd9] transition-colors">Wedding Cards</Link>
+                        <Link href="/collections?category=Photo" className="hover:text-[#6c2bd9] transition-colors">Acrylic Photo Frames</Link>
+                        <Link href="/collections?category=Mementos" className="hover:text-[#6c2bd9] transition-colors">Premium Mementos</Link>
+                        <Link href="/collections?category=Stationery" className="hover:text-[#6c2bd9] transition-colors">Custom Letter Pads</Link>
+                        <Link href="/collections?category=Stickers" className="hover:text-[#6c2bd9] transition-colors">Stickers & Labels</Link>
+                        <Link href="/collections?category=Corporate" className="hover:text-[#6c2bd9] transition-colors">Corporate Gift Sets</Link>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="text-gray-800 font-bold mb-4 pb-1 border-b border-gray-100 text-sm">Browse by Category</h4>
+                      <ul className="space-y-2.5 text-gray-600 text-[13px] flex flex-col">
+                        {categories.slice(0, 6).map(cat => (
+                          <Link key={cat.id} href={`/collections?category=${cat.id}`} className="hover:text-[#6c2bd9] transition-colors flex items-center justify-between gap-2">
+                            <span>{cat.name}</span>
+                            {cat.count > 0 && <span className="text-xs text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded-full">{cat.count}</span>}
+                          </Link>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="text-gray-800 font-bold mb-4 pb-1 border-b border-gray-100 text-sm">Wedding & Photo</h4>
+                      <ul className="space-y-2.5 text-gray-600 text-[13px] flex flex-col">
+                        <Link href="/collections?category=Wedding" className="hover:text-[#6c2bd9] transition-colors font-medium text-[#6c2bd9]">View All Wedding &gt;</Link>
+                        <Link href="/collections?category=Wedding" className="hover:text-[#6c2bd9] transition-colors">Premium Wedding Cards</Link>
+                        <Link href="/collections?category=Wedding" className="hover:text-[#6c2bd9] transition-colors">Designer Invitations</Link>
+                        <Link href="/collections?category=Wedding" className="hover:text-[#6c2bd9] transition-colors">Ring Bound Cards</Link>
+                      </ul>
+                      <h4 className="text-gray-800 font-bold mt-5 mb-3 pb-1 border-b border-gray-100 text-sm">Photo Gifts</h4>
+                      <ul className="space-y-2.5 text-gray-600 text-[13px] flex flex-col">
+                        <Link href="/collections?category=Photo" className="hover:text-[#6c2bd9] transition-colors font-medium text-[#6c2bd9]">View All Photo &gt;</Link>
+                        <Link href="/collections?category=Photo" className="hover:text-[#6c2bd9] transition-colors">Acrylic Photo Frames</Link>
+                        <Link href="/collections?category=Photo" className="hover:text-[#6c2bd9] transition-colors">Custom Canvas Prints</Link>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="text-gray-800 font-bold mb-4 pb-1 border-b border-gray-100 text-sm">Browse by Tags</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {popularTags.slice(0, 12).map(tag => (
+                          <button
+                            key={tag}
+                            onClick={() => handleTagSearch(tag)}
+                            className="px-2.5 py-1 bg-gray-50 text-gray-600 rounded-full text-xs font-medium hover:bg-purple-50 hover:text-[#6c2bd9] border border-gray-100 hover:border-purple-200 transition-colors"
+                          >
+                            #{tag}
+                          </button>
+                        ))}
                       </div>
                     </div>
                   </div>
-                )}
+                </div>
+              )}
+            </li>
+
+            {/* Dynamic Category Links */}
+            {(categories.length > 0 ? categories : [
+              { id: "Wedding", name: "Wedding Cards", count: null },
+              { id: "Photo", name: "Photo Frames", count: null },
+              { id: "Mementos", name: "Mementos", count: null },
+              { id: "Stationery", name: "Letter Pads", count: null },
+              { id: "Corporate", name: "Corporate Gifts", count: null },
+              { id: "Printing", name: "Custom Printing", count: null },
+              { id: "Stickers", name: "Stickers", count: null },
+            ]).slice(0, 7).map((cat: any, idx) => (
+              <li key={idx} className="flex-shrink-0">
+                <Link
+                  href={`/collections?category=${cat.id || cat.name}`}
+                  className="block py-2 px-3 border-b-2 border-transparent hover:text-[#e21b22] hover:border-[#e21b22] transition-colors whitespace-nowrap"
+                >
+                  {cat.name}
+                </Link>
               </li>
             ))}
           </ul>
         </div>
       </div>
 
-      {/* Sub Categories with Photos - Story Style */}
-      <div className="hidden md:block py-8 bg-gradient-to-b from-white to-[#fcfafc] border-b border-purple-50">
-        <div className="container mx-auto px-4 lg:px-8">
-          <ul className="flex items-center justify-center gap-6 lg:gap-10 overflow-x-auto no-scrollbar px-2 pb-2">
-            {subCategories.map((sub, idx) => (
-              <Link href={`/collections?category=${sub.name}`}
-                key={idx} 
-                className="group flex flex-col items-center gap-3 cursor-pointer flex-shrink-0"
-              >
-                {/* Image Container with Gradient Border */}
-                <div className="relative p-[3px] rounded-full bg-gradient-to-tr from-gray-200 to-gray-100 group-hover:from-pink-500 group-hover:via-purple-500 group-hover:to-orange-400 transition-all duration-500 shadow-[0_4px_12px_rgba(0,0,0,0.05)] group-hover:shadow-[0_8px_20px_rgba(108,43,217,0.2)] hover:-translate-y-1">
-                  <div className="w-16 h-16 md:w-[72px] md:h-[72px] rounded-full border-[3px] border-white overflow-hidden relative bg-white">
-                    <NextImage 
-                      src={sub.image}
-                      alt={sub.name}
-                      fill
-                      sizes="100px"
-                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                    />
-                  </div>
-                </div>
-                {/* Text */}
-                <span className="text-[13px] font-bold text-gray-600 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-pink-600 group-hover:to-purple-600 transition-all duration-300 whitespace-nowrap">
-                  {sub.name}
-                </span>
-              </Link>
-            ))}
-          </ul>
-        </div>
-      </div>
+      {/* Sub-categories moved to home page as a dedicated section */}
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-white shadow-xl z-50 border-t border-gray-100 max-h-[calc(100vh-100px)] overflow-y-auto">
+        <div className="md:hidden absolute top-full left-0 w-full bg-white shadow-xl z-50 border-t border-gray-100 max-h-[80vh] overflow-y-auto">
           <div className="p-4 border-b border-gray-100">
             <form onSubmit={handleSearch} className="w-full flex shadow-sm rounded-md overflow-hidden border border-gray-200">
               <input
@@ -316,32 +329,88 @@ export function Header() {
                 placeholder="Search products..."
                 className="w-full pl-4 pr-4 py-3 bg-gray-50 text-sm focus:outline-none focus:bg-white"
               />
-              <button type="submit" className="bg-[#e21b22] text-white px-6 font-medium hover:bg-red-700">
-                <Search className="w-5 h-5" />
+              <button type="submit" className="bg-[#e21b22] text-white px-5 font-medium hover:bg-red-700">
+                <Search className="w-4 h-4" />
               </button>
             </form>
           </div>
+
+          {/* Tag cloud for mobile */}
+          <div className="p-4 border-b border-gray-100">
+            <p className="text-xs text-gray-400 uppercase font-semibold mb-2">Browse by Tags</p>
+            <div className="flex flex-wrap gap-2">
+              {popularTags.slice(0, 10).map(tag => (
+                <button
+                  key={tag}
+                  onClick={() => handleTagSearch(tag)}
+                  className="px-2.5 py-1 bg-gray-50 text-gray-600 rounded-full text-xs font-medium hover:bg-pink-50 hover:text-pink-600 border border-gray-100"
+                >
+                  #{tag}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <ul className="flex flex-col py-2">
-            <li className="px-6 py-3 border-b border-gray-50 font-bold text-gray-900">Categories</li>
-            {topCategories.map((cat, idx) => (
+            <li className="px-6 py-2.5 text-xs text-gray-400 uppercase font-semibold tracking-wider">Categories</li>
+            <li>
+              <Link 
+                href="/collections" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between px-6 py-3 text-sm text-gray-700 font-semibold hover:text-[#e21b22] hover:bg-gray-50 transition-colors"
+              >
+                <span>All Products</span>
+              </Link>
+            </li>
+            {(categories.length > 0 ? categories : [
+              { id: "Wedding", name: "Wedding Cards", count: null },
+              { id: "Photo", name: "Photo Frames", count: null },
+              { id: "Mementos", name: "Mementos", count: null },
+            ]).map((cat: any, idx) => (
               <li key={idx}>
                 <Link 
-                  href={`/collections?category=${cat}`} 
+                  href={`/collections?category=${cat.id || cat.name}`} 
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-6 py-3 text-sm text-gray-600 hover:text-[#e21b22] hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-between px-6 py-3 text-sm text-gray-600 hover:text-[#e21b22] hover:bg-gray-50 transition-colors"
                 >
-                  {cat}
+                  <span>{cat.name}</span>
+                  {cat.count > 0 && <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{cat.count}</span>}
                 </Link>
               </li>
             ))}
-            <li className="px-6 py-4 mt-2 border-t border-gray-100 flex items-center justify-between text-sm font-medium text-gray-700">
-              <span className="flex items-center gap-2"><User className="w-4 h-4" /> Login / Register</span>
+            <li className="px-4 py-3 mt-2 border-t border-gray-100">
+              <div className="grid grid-cols-3 gap-3">
+                <Link 
+                  href="/auth/login" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex flex-col items-center gap-1 p-3 bg-gray-50 rounded-lg text-gray-600 hover:text-[#e21b22] hover:bg-red-50 transition-colors"
+                >
+                  <LogIn className="w-5 h-5" />
+                  <span className="text-xs font-medium">Login</span>
+                </Link>
+                <Link 
+                  href="/orders" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex flex-col items-center gap-1 p-3 bg-gray-50 rounded-lg text-gray-600 hover:text-[#e21b22] hover:bg-red-50 transition-colors"
+                >
+                  <Package className="w-5 h-5" />
+                  <span className="text-xs font-medium">Orders</span>
+                </Link>
+                <Link 
+                  href="/checkout" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex flex-col items-center gap-1 p-3 bg-gray-50 rounded-lg text-gray-600 hover:text-[#e21b22] hover:bg-red-50 transition-colors"
+                >
+                  <ShoppingCart className="w-5 h-5" />
+                  <span className="text-xs font-medium">Checkout</span>
+                </Link>
+              </div>
             </li>
           </ul>
         </div>
       )}
 
-      {/* Floating Chat Button */}
+      {/* Floating WhatsApp Chat Button */}
       <div className="fixed bottom-6 right-6 z-50 group">
         <div className="absolute bottom-16 right-0 bg-white p-3 rounded-lg shadow-xl border border-gray-100 w-48 text-xs font-medium text-gray-700 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
           Need help? <br/><span className="text-[#25D366] font-bold">Chat with us!</span> <br/>Dedicated Customer Care <span className="text-[#f16334]">HERE</span>
