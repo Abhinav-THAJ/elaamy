@@ -69,8 +69,15 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
             ))}
           </div>
         ) : (
-          <div className="text-center py-12">
-            <p className="text-gray-500">No products found in this category yet. Please check back later!</p>
+          <div className="bg-white rounded-xl p-16 shadow-sm border border-gray-100 text-center max-w-2xl mx-auto mt-8">
+            <div className="text-6xl mb-6">⏳</div>
+            <h3 className="text-3xl font-serif text-gray-900 mb-3">Coming Soon!</h3>
+            <p className="text-gray-500 text-lg mb-8">
+              We are carefully curating the finest premium {category} products. They will be available here very soon.
+            </p>
+            <Link href="/collections" className="inline-flex items-center justify-center px-8 py-3.5 bg-[#e21b22] text-white rounded-full font-semibold text-sm shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
+              Browse Other Collections
+            </Link>
           </div>
         )}
       </div>

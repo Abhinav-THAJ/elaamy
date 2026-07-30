@@ -357,12 +357,25 @@ export default function CollectionsClient() {
               </div>
             ) : (
               <div className="bg-white rounded-xl p-12 shadow-sm border border-gray-100 text-center">
-                <div className="text-5xl mb-4">🔍</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">No products found</h3>
-                <p className="text-gray-500 mb-6">Try adjusting your filters or search term.</p>
-                <Link href="/collections" className="inline-block px-6 py-2.5 bg-[#e21b22] text-white rounded-lg hover:bg-red-700 transition-colors font-medium">
-                  Clear All Filters
-                </Link>
+                <div className="text-5xl mb-4">{products.length === 0 ? "⏳" : "🔍"}</div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  {products.length === 0 ? "Coming Soon!" : "No products found"}
+                </h3>
+                <p className="text-gray-500 mb-6">
+                  {products.length === 0 
+                    ? "We are currently curating the best items for this category. Check back soon!" 
+                    : "Try adjusting your filters or search term."}
+                </p>
+                {products.length > 0 && (
+                  <Link href="/collections" className="inline-block px-6 py-2.5 bg-[#e21b22] text-white rounded-lg hover:bg-red-700 transition-colors font-medium">
+                    Clear All Filters
+                  </Link>
+                )}
+                {products.length === 0 && (
+                  <Link href="/collections" className="inline-block px-6 py-2.5 bg-[#e21b22] text-white rounded-lg hover:bg-red-700 transition-colors font-medium">
+                    Browse Other Collections
+                  </Link>
+                )}
               </div>
             )}
           </main>
