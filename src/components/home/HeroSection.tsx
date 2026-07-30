@@ -115,7 +115,7 @@ export function HeroSection() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
             </div>
             {/* Floating badge */}
-            <div className="absolute -bottom-4 -left-4 bg-white rounded-xl shadow-lg p-3 border border-gray-100">
+            <div className="absolute -bottom-4 left-4 sm:-left-4 bg-white rounded-xl shadow-lg p-3 border border-gray-100">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold"
                   style={{ backgroundColor: slide.accent }}>
