@@ -18,7 +18,7 @@ export async function fetchWooData(endpoint: string, params: Record<string, any>
     ).toString();
 
     const url = `${WOO_URL}/wp-json/wc/v3/${endpoint}${queryString ? `?${queryString}` : ""}`;
-    const credentials = Buffer.from(`${WOO_KEY}:${WOO_SECRET}`).toString("base64");
+    const credentials = btoa(`${WOO_KEY}:${WOO_SECRET}`);
 
     const res = await fetch(url, {
       headers: {
@@ -68,7 +68,7 @@ export async function postWooData(endpoint: string, data: any = {}): Promise<any
   }
 
   const url = `${WOO_URL}/wp-json/wc/v3/${endpoint}`;
-  const credentials = Buffer.from(`${WOO_KEY}:${WOO_SECRET}`).toString("base64");
+  const credentials = btoa(`${WOO_KEY}:${WOO_SECRET}`);
 
   const res = await fetch(url, {
     method: "POST",
