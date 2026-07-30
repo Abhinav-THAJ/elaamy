@@ -33,19 +33,29 @@ export async function fetchWooData(endpoint: string, params: Record<string, any>
       return [];
     }
 
-    const rawData = await res.json();
-    const data = Array.isArray(rawData) ? rawData : [];
+    const data = await res.json();
     
     // Fix images in products response
-    return data.map((item: any) => {
-      if (item.images && Array.isArray(item.images)) {
-        item.images = item.images.map((img: any) => ({
+    if (Array.isArray(data)) {
+      return data.map((item: any) => {
+        if (item.images && Array.isArray(item.images)) {
+          item.images = item.images.map((img: any) => ({
+            ...img,
+            src: getCorrectImage(img.src)
+          }));
+        }
+        return item;
+      });
+    } else if (data && typeof data === 'object') {
+      if (data.images && Array.isArray(data.images)) {
+        data.images = data.images.map((img: any) => ({
           ...img,
           src: getCorrectImage(img.src)
         }));
       }
-      return item;
-    });
+      return data;
+    }
+    return data;
   } catch (error) {
     console.error(`Error fetching WooCommerce ${endpoint}:`, error);
     return [];
