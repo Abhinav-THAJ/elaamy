@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import { fetchWooData, postWooData } from '@/lib/woocommerce';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
+  console.log("API ROUTE HIT:", request.url);
   const { searchParams } = new URL(request.url);
   const endpoint = searchParams.get('endpoint');
   

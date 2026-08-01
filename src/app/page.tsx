@@ -11,14 +11,15 @@ import { CategoryCircles } from "@/components/home/CategoryCircles";
 import { PartnersSection } from "@/components/home/PartnersSection";
 import { StatsSection } from "@/components/home/StatsSection";
 import { HeroSection } from "@/components/home/HeroSection";
+import { TagCloud } from "@/components/home/TagCloud";
 import { fetchWooClient } from "@/lib/woocommerce-client";
 
 export default function Home() {
   const [wooProducts, setWooProducts] = useState<any[]>([]);
 
   useEffect(() => {
-    // Fetch enough products so we can distribute them without repeating
-    fetchWooClient("products", { per_page: "24", status: "publish" })
+    // Fetch enough products so we can distribute them without repeating, ordered by newest
+    fetchWooClient("products", { per_page: "24", status: "publish", orderby: "date", order: "desc" })
       .then((data) => {
         if (Array.isArray(data)) setWooProducts(data);
       })
@@ -53,6 +54,9 @@ export default function Home() {
 
       {/* Stats - Total Work & Customers */}
       <StatsSection />
+
+      {/* Tag based search */}
+      <TagCloud />
 
       {/* You might be interested in */}
       <InterestedProducts products={interestedProducts} />

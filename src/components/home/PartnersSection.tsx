@@ -24,7 +24,8 @@ export function PartnersSection() {
 
   const scroll = (dir: "left" | "right") => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: dir === "right" ? 300 : -300, behavior: "smooth" });
+      const scrollAmount = scrollRef.current.clientWidth * 0.8;
+      scrollRef.current.scrollBy({ left: dir === "right" ? scrollAmount : -scrollAmount, behavior: "smooth" });
     }
   };
 
@@ -57,7 +58,7 @@ export function PartnersSection() {
             {partners.map((partner, idx) => (
               <div
                 key={idx}
-                className="flex-shrink-0 flex items-center justify-center w-36 h-16 bg-gray-50 rounded-xl border border-gray-100 hover:border-gray-300 hover:bg-white hover:shadow-md transition-all duration-300 cursor-pointer grayscale hover:grayscale-0"
+                className="flex-shrink-0 flex items-center justify-center w-36 h-16 bg-white rounded-xl border border-gray-100 hover:border-pink-300 hover:shadow-md transition-all duration-300 cursor-pointer"
               >
                 <img
                   src={partner.logo}

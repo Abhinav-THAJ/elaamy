@@ -24,12 +24,12 @@ export function GiftHampers({ products = [] }: { products?: any[] }) {
         {/* Section Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-[#6c2bd9] mb-1">Fresh Arrivals</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-[#e21b22] mb-1">Fresh Arrivals</p>
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
               Recently Added Products
             </h2>
           </div>
-          <Link href="/collections" className="text-sm font-semibold text-gray-500 hover:text-[#6c2bd9] transition-colors flex items-center gap-1">
+          <Link href="/collections" className="text-sm font-semibold text-gray-500 hover:text-[#e21b22] transition-colors flex items-center gap-1">
             View All <span>›</span>
           </Link>
         </div>
@@ -38,11 +38,11 @@ export function GiftHampers({ products = [] }: { products?: any[] }) {
           {displayProducts.map((product) => (
             <div
               key={product.id}
-              className="bg-white rounded-xl border border-transparent hover:border-purple-100 hover:shadow-xl transition-all duration-300 group overflow-hidden"
+              className="bg-white rounded-xl border border-gray-100 hover:border-pink-200 hover:shadow-xl transition-all duration-300 group overflow-hidden"
             >
               <Link href={`/product/${product.id}`} className="block relative aspect-square bg-[#F8F9FA] overflow-hidden">
                 {product.sale && (
-                  <span className="absolute top-2 left-2 bg-[#6c2bd9] text-white text-[9px] font-bold px-2 py-0.5 rounded-full z-10">
+                  <span className="absolute top-2 left-2 bg-[#e21b22] text-white text-[9px] font-bold px-2 py-0.5 rounded-full z-10">
                     SALE
                   </span>
                 )}
@@ -56,13 +56,13 @@ export function GiftHampers({ products = [] }: { products?: any[] }) {
               </Link>
               <div className="p-3">
                 <Link href={`/product/${product.id}`}>
-                  <h3 className="text-sm font-semibold text-gray-800 group-hover:text-purple-600 transition-colors line-clamp-2 mb-2 min-h-[40px]">
+                  <h3 className="text-sm font-semibold text-gray-800 group-hover:text-[#e21b22] transition-colors line-clamp-2 mb-2 min-h-[40px]">
                     {product.name}
                   </h3>
                 </Link>
                 <div className="flex items-center justify-between">
                   <div
-                    className="text-gray-900 font-bold text-sm [&_del]:text-gray-400 [&_del]:text-xs [&_del]:line-through [&_del]:font-normal flex gap-1.5 items-center flex-wrap"
+                    className="text-[#e21b22] font-bold text-sm [&_del]:text-gray-400 [&_del]:text-xs [&_del]:line-through [&_del]:font-normal flex gap-1.5 items-center flex-wrap"
                     dangerouslySetInnerHTML={{ __html: product.price_html }}
                   />
                   <button

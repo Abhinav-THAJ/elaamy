@@ -2,7 +2,11 @@
 // This is more reliable than the @woocommerce/woocommerce-rest-api package on Vercel
 import { getCorrectImage } from "./woocommerce-client";
 
-const WOO_URL = (process.env.NEXT_PUBLIC_WOO_URL || "").replace(/\/$/, "");
+let envUrl = (process.env.NEXT_PUBLIC_WOO_URL || "").replace(/\/$/, "");
+if (envUrl && !envUrl.startsWith("http")) {
+  envUrl = `https://${envUrl}`;
+}
+const WOO_URL = envUrl;
 const WOO_KEY = process.env.WOO_CONSUMER_KEY || process.env.NEXT_PUBLIC_WOO_CONSUMER_KEY || "";
 const WOO_SECRET = process.env.WOO_CONSUMER_SECRET || process.env.NEXT_PUBLIC_WOO_CONSUMER_SECRET || "";
 
@@ -18,14 +22,17 @@ export async function fetchWooData(endpoint: string, params: Record<string, any>
     ).toString();
 
     const url = `${WOO_URL}/wp-json/wc/v3/${endpoint}${queryString ? `?${queryString}` : ""}`;
+    console.log("Fetching WooCommerce URL:", url);
     const credentials = btoa(`${WOO_KEY}:${WOO_SECRET}`);
 
     const res = await fetch(url, {
       headers: {
         Authorization: `Basic ${credentials}`,
         "Content-Type": "application/json",
+        "Accept": "application/json",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
       },
-      next: { revalidate: 60 }, // Cache for 60 seconds
+      cache: "no-store", // Disable caching to always get fresh products
     });
 
     if (!res.ok) {

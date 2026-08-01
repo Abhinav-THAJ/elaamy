@@ -49,12 +49,13 @@ export function CategoryCircles() {
 
   const scroll = (dir: "left" | "right") => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: dir === "right" ? 280 : -280, behavior: "smooth" });
+      const scrollAmount = scrollRef.current.clientWidth * 0.8;
+      scrollRef.current.scrollBy({ left: dir === "right" ? scrollAmount : -scrollAmount, behavior: "smooth" });
     }
   };
 
   return (
-    <section className="py-8 bg-white border-b border-gray-100">
+    <section className="py-4 bg-white border-b border-gray-100 sticky top-[69px] md:top-[115px] z-40 shadow-sm">
       <div className="container mx-auto px-4 lg:px-8 max-w-7xl">
         {/* Section Label */}
         <div className="flex items-center justify-between mb-5">

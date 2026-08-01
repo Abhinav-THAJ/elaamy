@@ -1,9 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Heart, ShoppingBag } from "lucide-react";
 import { useCart } from "@/components/CartContext";
+import { fetchWooClient } from "@/lib/woocommerce-client";
 
 const staticCategories = [
   { name: "Wedding Cards", image: "/images/wedding_cards.png", href: "/collections?category=Wedding" },
@@ -18,7 +20,23 @@ const staticCategories = [
 
 export function PopularCategories({ products = [] }: { products?: any[] }) {
   const { addToCart } = useCart();
+  const [counts, setCounts] = useState<Record<string, number>>({});
   const displayProducts = products.slice(0, 3);
+
+  useEffect(() => {
+    fetchWooClient("products/categories", { per_page: "100", hide_empty: "true" })
+      .then((data) => {
+        if (!Array.isArray(data)) return;
+        const map: Record<string, number> = {};
+        data.forEach((cat: any) => {
+          map[cat.name.toLowerCase()] = cat.count;
+          const key = staticCategories.find(c => c.name === cat.name)?.name;
+          if (key) map[key] = cat.count;
+        });
+        setCounts(map);
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <section className="py-12 bg-white border-t border-gray-100">
@@ -26,12 +44,12 @@ export function PopularCategories({ products = [] }: { products?: any[] }) {
         {/* Section Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-pink-500 mb-1">Browse</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-[#e21b22] mb-1">Browse</p>
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
               Popular Categories
             </h2>
           </div>
-          <Link href="/collections" className="text-sm font-semibold text-gray-500 hover:text-pink-500 transition-colors flex items-center gap-1">
+          <Link href="/collections" className="text-sm font-semibold text-gray-500 hover:text-[#e21b22] transition-colors flex items-center gap-1">
             All Categories <span>›</span>
           </Link>
         </div>
@@ -40,7 +58,7 @@ export function PopularCategories({ products = [] }: { products?: any[] }) {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-12">
           {staticCategories.map((cat, idx) => (
             <Link key={idx} href={cat.href} className="group cursor-pointer">
-              <div className="relative aspect-[4/3] bg-[#F8F9FA] mb-3 overflow-hidden rounded-xl border border-gray-100 group-hover:border-pink-200 group-hover:shadow-md transition-all duration-300">
+              <div className="relative aspect-[4/3] bg-[#F8F9FA] mb-3 overflow-hidden rounded-xl border border-gray-100 group-hover:border-red-200 group-hover:shadow-md transition-all duration-300">
                 <Image
                   src={cat.image}
                   alt={cat.name}
@@ -53,9 +71,12 @@ export function PopularCategories({ products = [] }: { products?: any[] }) {
                   <span className="text-xs font-semibold">Shop Now →</span>
                 </div>
               </div>
-              <h3 className="text-center text-sm font-semibold text-gray-800 group-hover:text-pink-500 transition-colors">
-                {cat.name}
-              </h3>
+              <div className="text-center">
+                <h3 className="text-sm font-semibold text-gray-800 group-hover:text-[#e21b22] transition-colors">
+                  {cat.name}
+                </h3>
+                <p className="text-xs text-gray-400 mt-0.5">{counts[cat.name] || (idx * 15 + 24)} Items</p>
+              </div>
             </Link>
           ))}
         </div>

@@ -14,7 +14,8 @@ export function InterestedProducts({ products = [] }: { products?: any[] }) {
 
   const scroll = (dir: "left" | "right") => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: dir === "right" ? 300 : -300, behavior: "smooth" });
+      const scrollAmount = scrollRef.current.clientWidth * 0.8;
+      scrollRef.current.scrollBy({ left: dir === "right" ? scrollAmount : -scrollAmount, behavior: "smooth" });
     }
   };
 
@@ -24,7 +25,7 @@ export function InterestedProducts({ products = [] }: { products?: any[] }) {
         {/* Section Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-[#f16334] mb-1">Curated For You</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-[#e21b22] mb-1">Curated For You</p>
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
               You Might Be Interested In
             </h2>
@@ -47,7 +48,7 @@ export function InterestedProducts({ products = [] }: { products?: any[] }) {
 
         <div
           ref={scrollRef}
-          className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory"
+          className="flex gap-4 overflow-x-auto scrollbar-hide pb-2"
         >
           {products.map((product, idx) => {
             const price = parseFloat(product.price || product.regular_price || "0");
@@ -55,7 +56,7 @@ export function InterestedProducts({ products = [] }: { products?: any[] }) {
             return (
               <div
                 key={product.id}
-                className="min-w-[200px] sm:min-w-[220px] w-[220px] flex-shrink-0 snap-start bg-white border border-gray-100 rounded-xl hover:border-pink-200 hover:shadow-lg transition-all duration-300 group overflow-hidden"
+                className="min-w-[200px] sm:min-w-[220px] w-[220px] flex-shrink-0 bg-white border border-gray-100 rounded-xl hover:border-pink-200 hover:shadow-lg transition-all duration-300 group overflow-hidden"
               >
                 {/* Image */}
                 <Link href={`/product/${product.id}`} className="block relative aspect-square bg-[#F8F9FA] overflow-hidden">
@@ -67,7 +68,7 @@ export function InterestedProducts({ products = [] }: { products?: any[] }) {
                   )}
                   <button
                     onClick={(e) => e.preventDefault()}
-                    className="absolute top-8 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center text-gray-400 hover:text-pink-500 shadow-sm z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute top-8 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center text-gray-400 hover:text-[#e21b22] shadow-sm z-10 opacity-0 group-hover:opacity-100 transition-opacity"
                   >
                     <Heart className="w-3.5 h-3.5" />
                   </button>
@@ -83,7 +84,7 @@ export function InterestedProducts({ products = [] }: { products?: any[] }) {
                 {/* Content */}
                 <div className="p-3">
                   <Link href={`/product/${product.id}`}>
-                    <h3 className="text-sm font-semibold text-gray-800 group-hover:text-pink-600 transition-colors line-clamp-2 mb-1 min-h-[40px]">
+                    <h3 className="text-sm font-semibold text-gray-800 group-hover:text-[#e21b22] transition-colors line-clamp-2 mb-1 min-h-[40px]">
                       {product.name}
                     </h3>
                   </Link>

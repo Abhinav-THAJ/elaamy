@@ -176,6 +176,13 @@ export function Header() {
           {/* Right Actions */}
           <div className="hidden md:flex items-center gap-5 text-[13px] text-gray-700 font-medium z-50">
 
+            <Link href="/orders" className="flex items-center gap-2 hover:text-[#e21b22] transition-colors relative">
+              <Package className="w-6 h-6 text-gray-500" />
+              <div className="flex flex-col text-left text-xs">
+                <span className="text-gray-400">My</span>
+                <span className="font-bold text-gray-800">Orders</span>
+              </div>
+            </Link>
             
             <button 
               onClick={() => setIsCartOpen(true)}

@@ -17,8 +17,21 @@ export function RecentlyViewed({ products: _propsProducts = [] }: { products?: a
     }
   }, []);
 
-  // If no recently viewed products, we don't render anything
-  if (!viewedProducts || viewedProducts.length === 0) return null;
+  // If no recently viewed products, show an empty state message
+  if (!viewedProducts || viewedProducts.length === 0) {
+    return (
+      <section className="py-12 bg-white">
+        <div className="container mx-auto px-4 lg:px-8 max-w-7xl">
+          <h2 className="text-2xl font-bold text-gray-700 mb-6">
+            Recently viewed products
+          </h2>
+          <div className="bg-gray-50 border border-gray-100 rounded-xl p-8 text-center text-gray-500 text-sm">
+            You haven't viewed any products yet.
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-12 bg-white">

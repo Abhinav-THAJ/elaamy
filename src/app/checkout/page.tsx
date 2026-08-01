@@ -10,7 +10,7 @@ const PAYMENT_METHODS = [
   { id: "cod", label: "Cash on Delivery", desc: "Pay when your order arrives", icon: Truck, available: true },
   { id: "upi", label: "UPI / QR Code", desc: "Pay via PhonePe, GPay, Paytm", icon: CreditCard, available: true },
   { id: "netbanking", label: "Net Banking", desc: "Pay via your bank account", icon: Landmark, available: true },
-  { id: "card", label: "Credit / Debit Card", desc: "Visa, Mastercard, Rupay", icon: CreditCard, available: false },
+  { id: "card", label: "Credit / Debit Card", desc: "Visa, Mastercard, Rupay", icon: CreditCard, available: true },
 ];
 
 export default function CheckoutPage() {

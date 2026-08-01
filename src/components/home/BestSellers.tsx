@@ -61,7 +61,7 @@ export function BestSellers({ products = [] }: { products?: any[] }) {
               </Link>
               <div className="p-3">
                 <Link href={`/product/${product.id}`}>
-                  <h3 className="text-sm font-semibold text-gray-800 line-clamp-2 mb-1 group-hover:text-pink-600 transition-colors min-h-[40px]">
+                  <h3 className="text-sm font-semibold text-gray-800 line-clamp-2 mb-1 group-hover:text-[#e21b22] transition-colors min-h-[40px]">
                     {product.name}
                   </h3>
                 </Link>
