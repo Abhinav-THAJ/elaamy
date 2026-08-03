@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import NextImage from "next/image";
 import { useRouter } from "next/navigation";
-import { Search, ShoppingCart, User, ChevronDown, Menu, X, Globe, Tag, LogIn, Package } from "lucide-react";
+import { Search, ShoppingCart, User, ChevronDown, Menu, X, Globe, Tag, LogIn, Package, Sparkles } from "lucide-react";
 import { useCart } from "@/components/CartContext";
 import { fetchWooClient } from "@/lib/woocommerce-client";
 
@@ -20,15 +20,17 @@ export function Header() {
   const [showTagDropdown, setShowTagDropdown] = useState(false);
   const tagRef = useRef<HTMLDivElement>(null);
 
-  // Fetch categories for nav
+  // Fetch categories for nav — live from WooCommerce, no static fallback
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
   useEffect(() => {
-    fetchWooClient("products/categories", { per_page: "50", hide_empty: "true" })
+    fetchWooClient("products/categories", { per_page: "50", hide_empty: "false", orderby: "name", order: "asc" })
       .then((data) => {
         if (Array.isArray(data)) {
-          setCategories(data.filter((c: any) => c.name !== "Uncategorized").slice(0, 8));
+          setCategories(data.filter((c: any) => c.name !== "Uncategorized"));
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setCategoriesLoading(false));
   }, []);
 
   // Sync the search query state with the URL when it changes on client-side only
@@ -86,10 +88,6 @@ export function Header() {
     setMobileMenuOpen(false);
   }, []);
 
-  const topCategories = categories.length > 0
-    ? categories.map(c => c.name)
-    : ["All Products", "Wedding Cards", "Photo Frames", "Mementos", "Letter Pads", "Corporate Gifts", "Custom Printing", "Stickers"];
-
   const popularTags = [
     "Wedding", "Birthday", "Anniversary", "Corporate", "Photo", "Custom", "Gift", "Personalized",
     "Bulk Order", "Premium", "Sticker", "Memento", "Trophy", "Award", "Invitation"
@@ -98,6 +96,9 @@ export function Header() {
   const filteredTags = tagSearch
     ? popularTags.filter(t => t.toLowerCase().includes(tagSearch.toLowerCase()))
     : popularTags;
+
+  // Category skeleton loader items
+  const SKELETON_COUNT = 6;
 
 
 
@@ -182,6 +183,15 @@ export function Header() {
                 <span className="text-gray-400">My</span>
                 <span className="font-bold text-gray-800">Orders</span>
               </div>
+            </Link>
+
+            {/* Customize Card — minimal bordered button */}
+            <Link
+              href="/customize-card"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#D4AF37] text-[#C4A484] text-xs font-semibold hover:bg-[#D4AF37] hover:text-white transition-all whitespace-nowrap"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              Customize Card
             </Link>
             
             <button 
@@ -299,25 +309,29 @@ export function Header() {
               )}
             </li>
 
-            {/* Dynamic Category Links */}
-            {(categories.length > 0 ? categories : [
-              { id: "Wedding", name: "Wedding Cards", count: null },
-              { id: "Photo", name: "Photo Frames", count: null },
-              { id: "Mementos", name: "Mementos", count: null },
-              { id: "Stationery", name: "Letter Pads", count: null },
-              { id: "Corporate", name: "Corporate Gifts", count: null },
-              { id: "Printing", name: "Custom Printing", count: null },
-              { id: "Stickers", name: "Stickers", count: null },
-            ]).slice(0, 7).map((cat: any, idx) => (
-              <li key={idx} className="flex-shrink-0">
-                <Link
-                  href={`/collections?category=${cat.id || cat.name}`}
-                  className="block py-2 px-3 border-b-2 border-transparent hover:text-[#e21b22] hover:border-[#e21b22] transition-colors whitespace-nowrap"
-                >
-                  {cat.name}
-                </Link>
-              </li>
-            ))}
+            {/* Dynamic Category Links — live from WooCommerce */}
+            {categoriesLoading ? (
+              // Skeleton loaders while fetching
+              Array.from({ length: SKELETON_COUNT }).map((_, i) => (
+                <li key={i} className="flex-shrink-0">
+                  <div className="h-4 w-20 bg-gray-100 rounded animate-pulse mx-3 my-3" />
+                </li>
+              ))
+            ) : (
+              categories.slice(0, 7).map((cat: any) => (
+                <li key={cat.id} className="flex-shrink-0">
+                  <Link
+                    href={`/collections?category=${cat.slug}`}
+                    className="flex items-center gap-1.5 py-2 px-3 border-b-2 border-transparent hover:text-[#e21b22] hover:border-[#e21b22] transition-colors whitespace-nowrap"
+                  >
+                    {cat.name}
+                    {cat.count > 0 && (
+                      <span className="text-[10px] bg-gray-100 text-gray-400 px-1.5 py-0.5 rounded-full font-normal">{cat.count}</span>
+                    )}
+                  </Link>
+                </li>
+              ))
+            )}
           </ul>
         </div>
       </div>
@@ -359,6 +373,17 @@ export function Header() {
           </div>
 
           <ul className="flex flex-col py-2">
+            {/* Customize Card CTA */}
+            <li className="px-4 pt-3 pb-2">
+              <Link
+                href="/customize-card"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-center gap-2 w-full py-2.5 rounded-full border border-[#D4AF37] text-[#C4A484] text-sm font-semibold hover:bg-[#D4AF37] hover:text-white transition-all"
+              >
+                <Sparkles className="w-4 h-4" />
+                Customize Your Wedding Card
+              </Link>
+            </li>
             <li className="px-6 py-2.5 text-xs text-gray-400 uppercase font-semibold tracking-wider">Categories</li>
             <li>
               <Link 
@@ -369,22 +394,26 @@ export function Header() {
                 <span>All Products</span>
               </Link>
             </li>
-            {(categories.length > 0 ? categories : [
-              { id: "Wedding", name: "Wedding Cards", count: null },
-              { id: "Photo", name: "Photo Frames", count: null },
-              { id: "Mementos", name: "Mementos", count: null },
-            ]).map((cat: any, idx) => (
-              <li key={idx}>
-                <Link 
-                  href={`/collections?category=${cat.id || cat.name}`} 
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-between px-6 py-3 text-sm text-gray-600 hover:text-[#e21b22] hover:bg-gray-50 transition-colors"
-                >
-                  <span>{cat.name}</span>
-                  {cat.count > 0 && <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{cat.count}</span>}
-                </Link>
-              </li>
-            ))}
+            {categoriesLoading ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <li key={i} className="px-6 py-3">
+                  <div className="h-4 w-32 bg-gray-100 rounded animate-pulse" />
+                </li>
+              ))
+            ) : (
+              categories.map((cat: any) => (
+                <li key={cat.id}>
+                  <Link
+                    href={`/collections?category=${cat.slug}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-between px-6 py-3 text-sm text-gray-600 hover:text-[#e21b22] hover:bg-gray-50 transition-colors"
+                  >
+                    <span>{cat.name}</span>
+                    {cat.count > 0 && <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{cat.count}</span>}
+                  </Link>
+                </li>
+              ))
+            )}
             <li className="px-4 py-3 mt-2 border-t border-gray-100">
               <div className="grid grid-cols-3 gap-3">
                 <Link 

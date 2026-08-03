@@ -56,7 +56,7 @@ export async function fetchWooClient(endpoint: string, params: Record<string, st
     }
     return data;
   } catch (e) {
-    console.error(`WooCommerce fetch error for ${endpoint}:`, e);
+    console.warn(`WooCommerce fetch error for ${endpoint}:`, e);
     return [];
   }
 }

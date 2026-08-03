@@ -14,7 +14,7 @@ const STATIC_CATEGORIES = [
   { name: "Business Stationery",slug: "Stationery",   image: "/images/business_stationery.png" },
   { name: "Packaging",          slug: "Packaging",    image: "/images/packaging_boxes.png" },
   { name: "Corporate Combos",   slug: "Corporate",    image: "/images/corporate_gifts.png" },
-  { name: "Stickers",           slug: "Stickers",     image: "/images/stickers_labels.png" },
+  { name: "Stickers",           slug: "sticker",      image: "/images/stickers_labels.png" },
   { name: "Custom Printing",    slug: "Printing",     image: "/images/custom_printing.png" },
   { name: "Gift Hampers",       slug: "Hampers",      image: "/images/gift_hampers.png" },
   { name: "Trophies & Awards",  slug: "Trophies",     image: "/images/mementos_awards.png" },
