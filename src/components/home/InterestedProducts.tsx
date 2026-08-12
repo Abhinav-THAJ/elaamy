@@ -5,9 +5,11 @@ import Link from "next/link";
 import { ShoppingBag, Heart, ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef } from "react";
 import { useCart } from "@/components/CartContext";
+import { useWishlist } from "@/components/WishlistContext";
 
 export function InterestedProducts({ products = [] }: { products?: any[] }) {
   const { addToCart } = useCart();
+  const { wishlist, addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   if (!products || products.length === 0) return null;
@@ -67,10 +69,26 @@ export function InterestedProducts({ products = [] }: { products?: any[] }) {
                     <span className="absolute top-2 right-2 bg-purple-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full z-10">NEW</span>
                   )}
                   <button
-                    onClick={(e) => e.preventDefault()}
-                    className="absolute top-8 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center text-gray-400 hover:text-[#e21b22] shadow-sm z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (isInWishlist(product.id.toString())) {
+                        removeFromWishlist(product.id.toString());
+                      } else {
+                        addToWishlist({
+                          id: product.id.toString(),
+                          name: product.name,
+                          price: price,
+                          image: imageUrl
+                        });
+                      }
+                    }}
+                    className={`absolute top-8 right-2 w-7 h-7 rounded-full flex items-center justify-center shadow-sm z-10 transition-all ${
+                      isInWishlist(product.id.toString()) 
+                        ? "bg-pink-500 text-white opacity-100" 
+                        : "bg-white text-gray-400 hover:text-pink-500 opacity-0 group-hover:opacity-100"
+                    }`}
                   >
-                    <Heart className="w-3.5 h-3.5" />
+                    <Heart className={`w-3.5 h-3.5 ${isInWishlist(product.id.toString()) ? "fill-current" : ""}`} />
                   </button>
                   <Image
                     src={imageUrl}

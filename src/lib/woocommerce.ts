@@ -7,13 +7,13 @@ if (envUrl && !envUrl.startsWith("http")) {
   envUrl = `https://${envUrl}`;
 }
 const WOO_URL = envUrl;
-const WOO_KEY = process.env.WOO_CONSUMER_KEY || process.env.NEXT_PUBLIC_WOO_CONSUMER_KEY || "";
-const WOO_SECRET = process.env.WOO_CONSUMER_SECRET || process.env.NEXT_PUBLIC_WOO_CONSUMER_SECRET || "";
+const WP_USER = process.env.WP_USERNAME || "";
+const WP_PASS = process.env.WP_APPLICATION_PASSWORD || "";
 
 export async function fetchWooData(endpoint: string, params: Record<string, any> = {}): Promise<any[]> {
   try {
-    if (!WOO_URL || !WOO_KEY || !WOO_SECRET) {
-      console.warn("WooCommerce env vars not set");
+    if (!WOO_URL || !WP_USER || !WP_PASS) {
+      console.warn("WooCommerce/WP env vars not set");
       return [];
     }
 
@@ -23,7 +23,7 @@ export async function fetchWooData(endpoint: string, params: Record<string, any>
 
     const url = `${WOO_URL}/wp-json/wc/v3/${endpoint}${queryString ? `?${queryString}` : ""}`;
     console.log("Fetching WooCommerce URL:", url);
-    const credentials = btoa(`${WOO_KEY}:${WOO_SECRET}`);
+    const credentials = btoa(`${WP_USER}:${WP_PASS}`);
 
     const res = await fetch(url, {
       headers: {
@@ -70,12 +70,12 @@ export async function fetchWooData(endpoint: string, params: Record<string, any>
 }
 
 export async function postWooData(endpoint: string, data: any = {}): Promise<any> {
-  if (!WOO_URL || !WOO_KEY || !WOO_SECRET) {
-    throw new Error("WooCommerce env vars not set");
+  if (!WOO_URL || !WP_USER || !WP_PASS) {
+    throw new Error("WooCommerce/WP env vars not set");
   }
 
   const url = `${WOO_URL}/wp-json/wc/v3/${endpoint}`;
-  const credentials = btoa(`${WOO_KEY}:${WOO_SECRET}`);
+  const credentials = btoa(`${WP_USER}:${WP_PASS}`);
 
   const res = await fetch(url, {
     method: "POST",
@@ -89,7 +89,14 @@ export async function postWooData(endpoint: string, data: any = {}): Promise<any
   if (!res.ok) {
     const errBody = await res.text();
     console.error(`WooCommerce POST failed: ${res.status}`, errBody);
-    throw new Error(`WooCommerce POST failed: ${res.status}`);
+    let errorMsg = `WooCommerce POST failed: ${res.status}`;
+    try {
+      const parsed = JSON.parse(errBody);
+      if (parsed.message) {
+        errorMsg = parsed.message;
+      }
+    } catch(e) {}
+    throw new Error(errorMsg);
   }
 
   return res.json();

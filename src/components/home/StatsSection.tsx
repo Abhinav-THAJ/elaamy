@@ -35,10 +35,10 @@ function StatCard({ stat, animate }: { stat: typeof stats[0]; animate: boolean }
       <div className="text-4xl mb-3 group-hover:scale-110 transition-transform duration-300">
         {stat.icon}
       </div>
-      <div className="text-3xl sm:text-4xl font-bold text-gray-900 mb-1 tabular-nums">
+      <div className="text-3xl sm:text-4xl font-bold text-white mb-1 tabular-nums">
         {count.toLocaleString()}{stat.suffix}
       </div>
-      <div className="text-sm text-gray-500 font-medium">{stat.label}</div>
+      <div className="text-sm text-gray-300 font-medium">{stat.label}</div>
     </div>
   );
 }

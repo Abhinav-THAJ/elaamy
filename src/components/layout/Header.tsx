@@ -4,8 +4,9 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import NextImage from "next/image";
 import { useRouter } from "next/navigation";
-import { Search, ShoppingCart, User, ChevronDown, Menu, X, Globe, Tag, LogIn, Package, Sparkles } from "lucide-react";
+import { Search, ShoppingCart, User, ChevronDown, Menu, X, Globe, Tag, LogIn, Package, Sparkles, Heart } from "lucide-react";
 import { useCart } from "@/components/CartContext";
+import { useWishlist } from "@/components/WishlistContext";
 import { fetchWooClient } from "@/lib/woocommerce-client";
 
 export function Header() {
@@ -13,12 +14,28 @@ export function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { cart, setIsCartOpen } = useCart();
+  const { wishlist } = useWishlist();
   const [showMegaMenu, setShowMegaMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
   const [tagSearch, setTagSearch] = useState("");
   const [showTagDropdown, setShowTagDropdown] = useState(false);
   const tagRef = useRef<HTMLDivElement>(null);
+  const [user, setUser] = useState<{username: string} | null>(null);
+
+  useEffect(() => {
+    const checkUser = () => {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      } else {
+        setUser(null);
+      }
+    };
+    checkUser();
+    window.addEventListener("storage", checkUser);
+    return () => window.removeEventListener("storage", checkUser);
+  }, []);
 
   // Fetch categories for nav — live from WooCommerce, no static fallback
   const [categoriesLoading, setCategoriesLoading] = useState(true);
@@ -177,11 +194,11 @@ export function Header() {
           {/* Right Actions */}
           <div className="hidden md:flex items-center gap-5 text-[13px] text-gray-700 font-medium z-50">
 
-            <Link href="/orders" className="flex items-center gap-2 hover:text-[#e21b22] transition-colors relative">
-              <Package className="w-6 h-6 text-gray-500" />
+            <Link href={user ? "/account" : "/auth/login"} className="flex items-center gap-2 hover:text-[#e21b22] transition-colors relative">
+              <User className="w-6 h-6 text-gray-500" />
               <div className="flex flex-col text-left text-xs">
-                <span className="text-gray-400">My</span>
-                <span className="font-bold text-gray-800">Orders</span>
+                <span className="text-gray-400">Welcome</span>
+                <span className="font-bold text-gray-800">{user ? user.username : 'Login / Signin'}</span>
               </div>
             </Link>
 
@@ -192,6 +209,21 @@ export function Header() {
             >
               <Sparkles className="w-3.5 h-3.5" />
               Customize Card
+            </Link>
+
+            <Link href="/wishlist" className="flex items-center gap-2 hover:text-[#e21b22] transition-colors relative">
+              <div className="relative">
+                <Heart className="w-6 h-6 text-gray-500" />
+                {wishlist.length > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 bg-pink-500 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full shadow-sm">
+                    {wishlist.length}
+                  </span>
+                )}
+              </div>
+              <div className="flex flex-col text-left text-xs">
+                <span className="text-gray-400">Your</span>
+                <span className="font-bold text-gray-800">Wishlist</span>
+              </div>
             </Link>
             
             <button 
@@ -214,7 +246,15 @@ export function Header() {
           </div>
 
           {/* Mobile: Cart + Menu */}
-          <div className="md:hidden flex items-center gap-3">
+          <div className="md:hidden flex items-center gap-4">
+            <Link href="/wishlist" className="relative">
+              <Heart className="w-6 h-6 text-gray-700" />
+              {wishlist.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-[9px] font-bold w-3.5 h-3.5 flex items-center justify-center rounded-full">
+                  {wishlist.length}
+                </span>
+              )}
+            </Link>
             <button onClick={() => setIsCartOpen(true)} className="relative">
               <ShoppingCart className="w-6 h-6 text-gray-700" />
               {cartItemCount > 0 && (
@@ -270,7 +310,6 @@ export function Header() {
                         {categories.slice(0, 6).map(cat => (
                           <Link key={cat.id} href={`/collections?category=${cat.id}`} className="hover:text-[#6c2bd9] transition-colors flex items-center justify-between gap-2">
                             <span>{cat.name}</span>
-                            {cat.count > 0 && <span className="text-xs text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded-full">{cat.count}</span>}
                           </Link>
                         ))}
                       </ul>
@@ -325,9 +364,6 @@ export function Header() {
                     className="flex items-center gap-1.5 py-2 px-3 border-b-2 border-transparent hover:text-[#e21b22] hover:border-[#e21b22] transition-colors whitespace-nowrap"
                   >
                     {cat.name}
-                    {cat.count > 0 && (
-                      <span className="text-[10px] bg-gray-100 text-gray-400 px-1.5 py-0.5 rounded-full font-normal">{cat.count}</span>
-                    )}
                   </Link>
                 </li>
               ))
@@ -415,23 +451,16 @@ export function Header() {
               ))
             )}
             <li className="px-4 py-3 mt-2 border-t border-gray-100">
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <Link 
-                  href="/auth/login" 
+                  href={user ? "/account" : "/auth/login"} 
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex flex-col items-center gap-1 p-3 bg-gray-50 rounded-lg text-gray-600 hover:text-[#e21b22] hover:bg-red-50 transition-colors"
                 >
                   <LogIn className="w-5 h-5" />
-                  <span className="text-xs font-medium">Login</span>
+                  <span className="text-xs font-medium">{user ? user.username : 'Login'}</span>
                 </Link>
-                <Link 
-                  href="/orders" 
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex flex-col items-center gap-1 p-3 bg-gray-50 rounded-lg text-gray-600 hover:text-[#e21b22] hover:bg-red-50 transition-colors"
-                >
-                  <Package className="w-5 h-5" />
-                  <span className="text-xs font-medium">Orders</span>
-                </Link>
+
                 <Link 
                   href="/checkout" 
                   onClick={() => setMobileMenuOpen(false)}

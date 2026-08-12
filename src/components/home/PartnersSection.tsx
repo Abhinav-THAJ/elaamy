@@ -5,18 +5,16 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const partners = [
-  { name: "Navbharat Times", logo: "https://placehold.co/160x60/f5f5f5/555555?text=Navbharat+Times" },
-  { name: "Fortis Hospitals", logo: "https://placehold.co/160x60/f5f5f5/555555?text=Fortis+Hospitals" },
-  { name: "Saint-Gobain", logo: "https://placehold.co/160x60/f5f5f5/555555?text=SAINT-GOBAIN" },
-  { name: "Mercedes-Benz", logo: "https://placehold.co/160x60/f5f5f5/555555?text=Mercedes-Benz" },
-  { name: "Cognizant", logo: "https://placehold.co/160x60/f5f5f5/555555?text=COGNIZANT" },
-  { name: "GK TMT", logo: "https://placehold.co/160x60/f5f5f5/555555?text=GK+TMT" },
-  { name: "Chandigarh University", logo: "https://placehold.co/160x60/f5f5f5/555555?text=Chandigarh+Uni" },
-  { name: "SBI Bank", logo: "https://placehold.co/160x60/f5f5f5/555555?text=SBI+Bank" },
-  { name: "Credix", logo: "https://placehold.co/160x60/f5f5f5/555555?text=Credix" },
-  { name: "Hyatt Hotels", logo: "https://placehold.co/160x60/f5f5f5/555555?text=HYATT" },
-  { name: "Godrej", logo: "https://placehold.co/160x60/f5f5f5/555555?text=Godrej" },
-  { name: "Tata Motors", logo: "https://placehold.co/160x60/f5f5f5/555555?text=Tata+Motors" },
+  { name: "Navbharat Times", logo: "https://logo.clearbit.com/navbharattimes.indiatimes.com" },
+  { name: "Fortis Hospitals", logo: "https://logo.clearbit.com/fortishealthcare.com" },
+  { name: "Saint-Gobain", logo: "https://logo.clearbit.com/saint-gobain.com" },
+  { name: "Mercedes-Benz", logo: "https://logo.clearbit.com/mercedes-benz.com" },
+  { name: "Cognizant", logo: "https://logo.clearbit.com/cognizant.com" },
+  { name: "Chandigarh University", logo: "https://logo.clearbit.com/cuchd.in" },
+  { name: "SBI Bank", logo: "https://logo.clearbit.com/sbi.co.in" },
+  { name: "Hyatt Hotels", logo: "https://logo.clearbit.com/hyatt.com" },
+  { name: "Godrej", logo: "https://logo.clearbit.com/godrej.com" },
+  { name: "Tata Motors", logo: "https://logo.clearbit.com/tatamotors.com" },
 ];
 
 export function PartnersSection() {

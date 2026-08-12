@@ -43,6 +43,6 @@ export async function POST(request: Request) {
     return NextResponse.json(data);
   } catch (error: any) {
     console.error('WooCommerce API POST Error:', error);
-    return NextResponse.json({ error: 'Failed to post WooCommerce data', details: error?.message }, { status: 500 });
+    return NextResponse.json({ error: error?.message || 'Failed to post WooCommerce data' }, { status: 500 });
   }
 }

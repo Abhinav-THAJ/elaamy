@@ -4,9 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { Heart, ShoppingBag, Star } from "lucide-react";
 import { useCart } from "@/components/CartContext";
+import { useWishlist } from "@/components/WishlistContext";
 
 export function BestSellers({ products = [] }: { products?: any[] }) {
   const { addToCart } = useCart();
+  const { wishlist, addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   if (!products || products.length === 0) return null;
 
   const displayProducts = products.slice(0, 8).map(p => ({
@@ -46,10 +48,26 @@ export function BestSellers({ products = [] }: { products?: any[] }) {
                   </span>
                 )}
                 <button
-                  className="absolute top-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center text-gray-400 hover:text-pink-500 hover:shadow-md transition-all z-10 opacity-0 group-hover:opacity-100"
-                  onClick={(e) => e.preventDefault()}
+                  className={`absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center transition-all z-10 ${
+                    isInWishlist(product.id.toString()) 
+                      ? "bg-pink-500 text-white opacity-100" 
+                      : "bg-white text-gray-400 hover:text-pink-500 hover:shadow-md opacity-0 group-hover:opacity-100"
+                  }`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (isInWishlist(product.id.toString())) {
+                      removeFromWishlist(product.id.toString());
+                    } else {
+                      addToWishlist({
+                        id: product.id.toString(),
+                        name: product.name,
+                        price: parseFloat(product.price || "0"),
+                        image: product.image
+                      });
+                    }
+                  }}
                 >
-                  <Heart className="w-4 h-4" />
+                  <Heart className={`w-4 h-4 ${isInWishlist(product.id.toString()) ? "fill-current" : ""}`} />
                 </button>
                 <Image
                   src={product.image}

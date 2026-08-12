@@ -15,30 +15,7 @@ const STATUS_CONFIG: Record<OrderStatus, { label: string; color: string; bg: str
   "refunded": { label: "Refunded", color: "text-gray-700", bg: "bg-gray-50 border-gray-200", icon: XCircle },
 };
 
-// Demo orders for when no real orders exist
-const DEMO_ORDERS = [
-  {
-    id: "1023",
-    date_created: "2026-07-25T10:00:00Z",
-    status: "completed" as OrderStatus,
-    total: "1250.00",
-    line_items: [
-      { id: 1, name: "Custom Wedding Card Set (50 pcs)", quantity: 1, total: "1250.00", image: "https://images.unsplash.com/photo-1538356111053-748a48e1acb8?w=100&h=100&fit=crop" }
-    ],
-    billing: { first_name: "Demo", last_name: "User", email: "demo@example.com" }
-  },
-  {
-    id: "1018",
-    date_created: "2026-07-10T14:30:00Z",
-    status: "processing" as OrderStatus,
-    total: "3400.00",
-    line_items: [
-      { id: 2, name: "Acrylic Photo Frame - A4 Size", quantity: 2, total: "1800.00", image: "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?w=100&h=100&fit=crop" },
-      { id: 3, name: "Custom Memento Trophy", quantity: 1, total: "1600.00", image: "https://images.unsplash.com/photo-1566125882500-87e10f726cdc?w=100&h=100&fit=crop" }
-    ],
-    billing: { first_name: "Demo", last_name: "User", email: "demo@example.com" }
-  }
-];
+
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
@@ -47,21 +24,57 @@ export default function OrdersPage() {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("elaamy_user");
-    if (storedUser) {
-      try { setUser(JSON.parse(storedUser)); } catch {}
-    }
+    const fetchOrders = async () => {
+      let currentUser = null;
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        try { 
+          currentUser = JSON.parse(storedUser);
+          setUser(currentUser); 
+        } catch {}
+      } else {
+        // Compatibility with older local storage
+        const elaamyUser = localStorage.getItem("elaamy_user");
+        if (elaamyUser) {
+          try { 
+            currentUser = JSON.parse(elaamyUser);
+            setUser(currentUser); 
+          } catch {}
+        }
+      }
 
-    // Load orders from localStorage (stored during checkout)
-    const storedOrders = localStorage.getItem("elaamy_orders");
-    let loadedOrders = [];
-    if (storedOrders) {
-      try { loadedOrders = JSON.parse(storedOrders); } catch {}
-    }
+      let loadedOrders: any[] = [];
+      
+      // Load orders from localStorage (stored during checkout) as fallback for guest
+      const storedOrders = localStorage.getItem("elaamy_orders");
+      if (storedOrders) {
+        try { loadedOrders = JSON.parse(storedOrders); } catch {}
+      }
 
-    // Combine real + demo orders
-    setOrders(loadedOrders.length > 0 ? loadedOrders : DEMO_ORDERS);
-    setLoading(false);
+      // If user is logged in and has an email, fetch their real orders from WooCommerce
+      if (currentUser && currentUser.email) {
+        try {
+          const res = await fetch(`/api/woo?endpoint=orders&search=${encodeURIComponent(currentUser.email)}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data) && data.length > 0) {
+              // Ensure we only show orders that belong to this email
+              const realOrders = data.filter(o => o.billing?.email === currentUser.email);
+              if (realOrders.length > 0) {
+                loadedOrders = realOrders;
+              }
+            }
+          }
+        } catch (e) {
+          console.error("Failed to fetch real orders", e);
+        }
+      }
+
+      setOrders(loadedOrders);
+      setLoading(false);
+    };
+
+    fetchOrders();
   }, []);
 
   if (loading) {
@@ -90,9 +103,9 @@ export default function OrdersPage() {
       </div>
 
       <div className="container mx-auto px-4 lg:px-8 max-w-4xl pt-8">
-        {!user && (
+        {!user && orders.length > 0 && (
           <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-6 text-sm text-amber-800">
-            <strong>Note:</strong> You are viewing demo orders. <Link href="/auth/login" className="text-[#e21b22] font-semibold hover:underline ml-1">Login</Link> to see your real order history.
+            <strong>Note:</strong> You are viewing orders stored on this device. <Link href="/auth/login" className="text-[#e21b22] font-semibold hover:underline ml-1">Login</Link> to sync and view your full order history across devices.
           </div>
         )}
 
@@ -187,8 +200,8 @@ export default function OrdersPage() {
                       <div className="space-y-3">
                         {(order.line_items || []).map((item: any) => (
                           <div key={item.id} className="flex items-center gap-4 p-3 bg-gray-50 rounded-xl">
-                            {item.image ? (
-                              <img src={item.image} alt={item.name} className="w-14 h-14 rounded-lg object-cover flex-shrink-0 border border-gray-100" />
+                            {item.image && (typeof item.image === 'string' || item.image.src) ? (
+                              <img src={typeof item.image === 'string' ? item.image : item.image.src} alt={item.name} className="w-14 h-14 rounded-lg object-cover flex-shrink-0 border border-gray-100" />
                             ) : (
                               <div className="w-14 h-14 bg-gray-200 rounded-lg flex-shrink-0" />
                             )}

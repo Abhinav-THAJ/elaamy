@@ -58,13 +58,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${playfair.variable} ${cormorant.variable} ${script.variable} h-full w-full antialiased bg-background text-foreground selection:bg-pink-100 selection:text-pink-900 overflow-x-clip`}
+      className={`${inter.variable} ${playfair.variable} ${cormorant.variable} ${script.variable} w-full antialiased bg-background text-foreground selection:bg-pink-100 selection:text-pink-900`}
     >
-      <body className="min-h-full w-full flex flex-col font-sans bg-white overflow-x-clip">
+      <body className="w-full flex flex-col font-sans bg-white overflow-x-hidden">
         <Providers>
           <Header />
           <CartSidebar />
-          <main className="flex-1 overflow-x-hidden w-full">{children}</main>
+          <main className="flex-1 w-full">{children}</main>
           <Footer />
         </Providers>
       </body>

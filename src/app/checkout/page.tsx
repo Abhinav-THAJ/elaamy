@@ -22,6 +22,7 @@ export default function CheckoutPage() {
   const [coupon, setCoupon] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
   const [couponError, setCouponError] = useState("");
+  const [checkoutError, setCheckoutError] = useState("");
 
   const discount = couponApplied ? Math.round(cartTotal * 0.1) : 0;
   const finalTotal = cartTotal - discount;
@@ -86,7 +87,7 @@ export default function CheckoutPage() {
       const data = await res.json();
 
       if (res.ok && data.id) {
-        // Save order to localStorage
+        // Save order to localStorage for quick local reference
         const savedOrders = JSON.parse(localStorage.getItem("elaamy_orders") || "[]");
         savedOrders.unshift({
           id: String(data.id),
@@ -107,50 +108,11 @@ export default function CheckoutPage() {
         setOrderPlaced(true);
         clearCart();
       } else {
-        // For demo/fallback, treat as success
-        const fakeOrderId = `ORD-${Date.now().toString().slice(-6)}`;
-        const savedOrders = JSON.parse(localStorage.getItem("elaamy_orders") || "[]");
-        savedOrders.unshift({
-          id: fakeOrderId,
-          date_created: new Date().toISOString(),
-          status: "pending",
-          total: grandTotal.toFixed(2),
-          line_items: cart.map(item => ({
-            id: Math.random(),
-            name: item.name,
-            quantity: item.quantity,
-            total: (item.price * item.quantity).toFixed(2),
-            image: item.image
-          })),
-          billing: orderData.billing,
-        });
-        localStorage.setItem("elaamy_orders", JSON.stringify(savedOrders.slice(0, 20)));
-        setOrderNumber(fakeOrderId);
-        setOrderPlaced(true);
-        clearCart();
+        throw new Error(data.message || "Failed to create order in WooCommerce");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      // Demo fallback
-      const fakeOrderId = `ORD-${Date.now().toString().slice(-6)}`;
-      const savedOrders = JSON.parse(localStorage.getItem("elaamy_orders") || "[]");
-      savedOrders.unshift({
-        id: fakeOrderId,
-        date_created: new Date().toISOString(),
-        status: "pending",
-        total: grandTotal.toFixed(2),
-        line_items: cart.map(item => ({
-          id: Math.random(),
-          name: item.name,
-          quantity: item.quantity,
-          total: (item.price * item.quantity).toFixed(2),
-          image: item.image
-        })),
-      });
-      localStorage.setItem("elaamy_orders", JSON.stringify(savedOrders.slice(0, 20)));
-      setOrderNumber(fakeOrderId);
-      setOrderPlaced(true);
-      clearCart();
+      setCheckoutError(err.message || "An error occurred during checkout. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -223,6 +185,11 @@ export default function CheckoutPage() {
           {/* Checkout Form */}
           <div className="w-full lg:w-3/5">
             <form onSubmit={handleCheckout} className="space-y-6">
+              {checkoutError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 text-sm font-medium">
+                  {checkoutError}
+                </div>
+              )}
               {/* Contact Info */}
               <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                 <h2 className="text-lg font-bold text-gray-900 mb-5">Contact Information</h2>

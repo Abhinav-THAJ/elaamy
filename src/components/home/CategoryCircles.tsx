@@ -55,7 +55,7 @@ export function CategoryCircles() {
   };
 
   return (
-    <section className="py-4 bg-white border-b border-gray-100 sticky top-[69px] md:top-[115px] z-40 shadow-sm">
+    <section className="py-4 bg-white border-b border-gray-100 shadow-sm">
       <div className="container mx-auto px-4 lg:px-8 max-w-7xl">
         {/* Section Label */}
         <div className="flex items-center justify-between mb-5">

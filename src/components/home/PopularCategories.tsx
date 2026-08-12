@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Heart, ShoppingBag } from "lucide-react";
 import { useCart } from "@/components/CartContext";
+import { useWishlist } from "@/components/WishlistContext";
 import { fetchWooClient } from "@/lib/woocommerce-client";
 
 const staticCategories = [
@@ -20,6 +21,7 @@ const staticCategories = [
 
 export function PopularCategories({ products = [] }: { products?: any[] }) {
   const { addToCart } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const [counts, setCounts] = useState<Record<string, number>>({});
   const displayProducts = products.slice(0, 3);
 
@@ -107,10 +109,26 @@ export function PopularCategories({ products = [] }: { products?: any[] }) {
                         </span>
                       )}
                       <button
-                        onClick={(e) => e.preventDefault()}
-                        className="absolute top-1.5 right-1.5 w-6 h-6 bg-white rounded-full flex items-center justify-center text-gray-400 hover:text-pink-500 hover:shadow-md transition-all z-10"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (isInWishlist(product.id.toString())) {
+                            removeFromWishlist(product.id.toString());
+                          } else {
+                            addToWishlist({
+                              id: product.id.toString(),
+                              name: product.name,
+                              price: price,
+                              image: imageUrl
+                            });
+                          }
+                        }}
+                        className={`absolute top-1.5 right-1.5 w-6 h-6 rounded-full flex items-center justify-center transition-all z-10 ${
+                          isInWishlist(product.id.toString()) 
+                            ? "bg-pink-500 text-white" 
+                            : "bg-white text-gray-400 hover:text-pink-500 hover:shadow-md"
+                        }`}
                       >
-                        <Heart className="w-3 h-3" />
+                        <Heart className={`w-3 h-3 ${isInWishlist(product.id.toString()) ? "fill-current" : ""}`} />
                       </button>
                       <Image
                         src={imageUrl}
