@@ -61,7 +61,7 @@ export function BestSellers({ products = [] }: { products?: any[] }) {
                       addToWishlist({
                         id: product.id.toString(),
                         name: product.name,
-                        price: parseFloat(product.price || "0"),
+                        price: product.price,
                         image: product.image
                       });
                     }

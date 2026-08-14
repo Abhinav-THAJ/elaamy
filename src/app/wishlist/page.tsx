@@ -75,7 +75,7 @@ export default function WishlistPage() {
                 <button
                   onClick={(e) => {
                     e.preventDefault();
-                    addToCart({ ...item, quantity: 1, type: "simple" });
+                    addToCart({ ...item, quantity: 1 });
                   }}
                   className="w-full mt-4 flex items-center justify-center gap-2 py-2 bg-gray-50 text-gray-700 rounded-lg hover:bg-[#e21b22] hover:text-white transition-colors text-sm font-medium border border-gray-100 group-hover:border-transparent"
                 >

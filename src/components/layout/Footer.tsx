@@ -129,10 +129,17 @@ export function Footer() {
 
       {/* Bottom Bar */}
       <div className="bg-[#1A1A1A] py-4">
-        <div className="container mx-auto px-4 sm:px-6 max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
-          <p className="text-[11px] text-[#A0A0A0]">
-            © Empireae 2026. All rights reserved.
-          </p>
+        <div className="container mx-auto px-4 sm:px-6 max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-6">
+            <p className="text-[11px] text-[#A0A0A0]">
+              © Empireae 2026. All rights reserved.
+            </p>
+            <div className="flex items-center gap-4 text-[11px] text-[#A0A0A0]">
+              <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
+              <Link href="/terms-and-conditions" className="hover:text-white transition-colors">Terms &amp; Conditions</Link>
+              <Link href="/refund-policy" className="hover:text-white transition-colors">Refund Policy</Link>
+            </div>
+          </div>
           <div className="flex items-center gap-3">
             <div className="px-3 h-8 bg-black border border-[#333] rounded flex items-center justify-center opacity-80 hover:opacity-100 transition-opacity cursor-pointer">
               <span className="text-[10px] text-white">🍎 App Store</span>
