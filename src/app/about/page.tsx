@@ -9,13 +9,13 @@ export default function AboutPage() {
         </h1>
         <div className="max-w-4xl mx-auto space-y-8 text-gray-700 leading-relaxed text-lg">
           <p>
-            In hac habitasse platea dictumsta. Pellentesque viverra sem nec orci lacinia, in bibendum urna mollis. Quisque nunc lacus, varius vel leo a, pretium lobortis metus. Vivamus consectetur consequat justo.
+            Welcome to Elaamy, where we believe in the power of meaningful connections. We specialize in providing premium customized gifts, elegant wedding cards, and professional business stationery tailored to your unique needs. Our mission is to help you celebrate life's most precious moments and elevate your brand's presence with high-quality, thoughtfully designed products.
           </p>
           <p>
-            Ut vitae massa a metus viverra finibus gravida at purus. Fusce quis rutrum lectus. Suspendisse tincidunt, lorem at cursus sodales, ligula arcu molestie odio, non mattis est elit et enim. Nulla non erat sed metus bibendum aliquam. Nunc venenatis elementum magna, sit amet auctor nisi. Ut vitae nunc eleifend, congue lorem consectetur, sodales ligula. Mauris ac nulla at risus mollis luctus lacinia vitae tortor. Vestibulum ut mi ut tortor maximus tristique ac in mi.
+            Whether you are looking for the perfect personalized gift to show someone you care, beautifully crafted invitations to set the tone for your special day, or sophisticated corporate gifts and stationery to leave a lasting impression, Elaamy is here to bring your vision to life. We take pride in our attention to detail and our commitment to excellence in every piece we create.
           </p>
           <p>
-            Phasellus sit amet iaculis tortor. Curabitur rhoncus arcu rutrum, tincidunt lorem sed, pulvinar magna. Donec pulvinar purus eget velit bibendum faucibus. Aliquam vitae turpis hendrerit, tempus diam ac, fringilla ex. Proin nec ex risus. Mauris suscipit at dui ut dapibus. Nam ullamcorper tincidunt est, et lacinia magna congue ut.
+            At Elaamy, customer satisfaction is at the heart of everything we do. Our team works tirelessly to source the finest materials and employ the best printing techniques to ensure that our products not only meet but exceed your expectations. Thank you for choosing us to be a part of your journey, and we look forward to continuing to serve you with creativity, passion, and care.
           </p>
         </div>
       </div>

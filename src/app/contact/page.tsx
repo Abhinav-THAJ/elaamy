@@ -97,7 +97,7 @@ export default function ContactPage() {
           {/* Contact Form */}
           <div className="bg-white p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100">
             <h3 className="text-2xl font-bold mb-2">Send Message</h3>
-            <p className="text-gray-500 mb-8">Quisque mattis tortor eu tristique sodales. Aenean sit amet justo nec sem vestibulum.</p>
+            <p className="text-gray-500 mb-8">Have a question or need assistance? Fill out the form below and our team will get back to you as soon as possible.</p>
             
             <form className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
