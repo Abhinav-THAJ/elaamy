@@ -91,7 +91,7 @@ export default function CheckoutPage() {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: rzpOrder.amount,
         currency: rzpOrder.currency,
-        name: "Empire",
+        name: "Elaamy",
         description: "Order Payment",
         order_id: rzpOrder.id,
         handler: async function (response: any) {
