@@ -59,13 +59,13 @@ export function Footer() {
               We bring your ideas to life with premium customized gifts, elegant wedding cards, and professional business stationery.
             </p>
             <div className="space-y-3">
-              <a href="tel:+971501234567" className="flex items-center gap-3 text-sm text-gray-600 hover:text-pink-600 transition-colors">
+              <a href="tel:+919656262613" className="flex items-center gap-3 text-sm text-gray-600 hover:text-pink-600 transition-colors">
                 <span className="w-8 h-8 rounded-full bg-pink-50 flex items-center justify-center text-pink-500 font-bold">📞</span>
-                +971 50 123 4567
+                +91 9656262613
               </a>
-              <a href="mailto:hello@elaamy.com" className="flex items-center gap-3 text-sm text-gray-600 hover:text-pink-600 transition-colors">
+              <a href="mailto:elaamy@gmail.com" className="flex items-center gap-3 text-sm text-gray-600 hover:text-pink-600 transition-colors">
                 <span className="w-8 h-8 rounded-full bg-pink-50 flex items-center justify-center text-pink-500 font-bold">✉️</span>
-                hello@elaamy.com
+                elaamy@gmail.com
               </a>
             </div>
           </div>

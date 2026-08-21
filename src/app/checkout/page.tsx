@@ -4,13 +4,11 @@ import { useCart } from "@/components/CartContext";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import Script from "next/script";
 import { CheckCircle, CreditCard, Landmark, Truck, ShieldCheck, Tag } from "lucide-react";
 
 const PAYMENT_METHODS = [
-  { id: "cod", label: "Cash on Delivery", desc: "Pay when your order arrives", icon: Truck, available: true },
-  { id: "upi", label: "UPI / QR Code", desc: "Pay via PhonePe, GPay, Paytm", icon: CreditCard, available: true },
-  { id: "netbanking", label: "Net Banking", desc: "Pay via your bank account", icon: Landmark, available: true },
-  { id: "card", label: "Credit / Debit Card", desc: "Visa, Mastercard, Rupay", icon: CreditCard, available: true },
+  { id: "razorpay", label: "Pay with Razorpay", desc: "Credit / Debit Card, UPI, Net Banking", icon: CreditCard, available: true },
 ];
 
 export default function CheckoutPage() {
@@ -18,7 +16,7 @@ export default function CheckoutPage() {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderNumber, setOrderNumber] = useState("");
   const [loading, setLoading] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState("cod");
+  const [paymentMethod, setPaymentMethod] = useState("razorpay");
   const [coupon, setCoupon] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
   const [couponError, setCouponError] = useState("");
@@ -47,7 +45,7 @@ export default function CheckoutPage() {
     const orderData = {
       payment_method: paymentMethod,
       payment_method_title: PAYMENT_METHODS.find(m => m.id === paymentMethod)?.label || paymentMethod,
-      set_paid: paymentMethod !== "cod",
+      set_paid: true,
       billing: {
         first_name: formData.get("firstName") as string,
         last_name: formData.get("lastName") as string,
@@ -56,7 +54,7 @@ export default function CheckoutPage() {
         city: formData.get("city") as string,
         state: formData.get("state") as string,
         postcode: formData.get("zip") as string,
-        country: "AE",
+        country: "IN",
         email: formData.get("email") as string,
         phone: formData.get("phone") as string,
       },
@@ -68,7 +66,7 @@ export default function CheckoutPage() {
         city: formData.get("city") as string,
         state: formData.get("state") as string,
         postcode: formData.get("zip") as string,
-        country: "AE",
+        country: "IN",
       },
       line_items: cart.map(item => ({
         product_id: parseInt(item.id),
@@ -78,42 +76,92 @@ export default function CheckoutPage() {
     };
 
     try {
-      const res = await fetch("/api/woo?endpoint=orders", {
+      // 1. Create Razorpay order
+      const rzpRes = await fetch("/api/razorpay/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderData)
+        body: JSON.stringify({ amount: grandTotal })
       });
+      const rzpOrder = await rzpRes.json();
 
-      const data = await res.json();
+      if (!rzpOrder.id) throw new Error(rzpOrder.error || "Failed to create Razorpay order");
 
-      if (res.ok && data.id) {
-        // Save order to localStorage for quick local reference
-        const savedOrders = JSON.parse(localStorage.getItem("elaamy_orders") || "[]");
-        savedOrders.unshift({
-          id: String(data.id),
-          date_created: new Date().toISOString(),
-          status: "pending",
-          total: grandTotal.toFixed(2),
-          line_items: cart.map(item => ({
-            id: Math.random(),
-            name: item.name,
-            quantity: item.quantity,
-            total: (item.price * item.quantity).toFixed(2),
-            image: item.image
-          })),
-          billing: orderData.billing,
-        });
-        localStorage.setItem("elaamy_orders", JSON.stringify(savedOrders.slice(0, 20)));
-        setOrderNumber(String(data.id));
-        setOrderPlaced(true);
-        clearCart();
-      } else {
-        throw new Error(data.message || "Failed to create order in WooCommerce");
-      }
+      // 2. Open Razorpay checkout
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: rzpOrder.amount,
+        currency: rzpOrder.currency,
+        name: "Empire",
+        description: "Order Payment",
+        order_id: rzpOrder.id,
+        handler: async function (response: any) {
+          try {
+            // Payment successful, now create WooCommerce order
+            const res = await fetch("/api/woo?endpoint=orders", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                ...orderData,
+                meta_data: [
+                  { key: "razorpay_payment_id", value: response.razorpay_payment_id },
+                  { key: "razorpay_order_id", value: response.razorpay_order_id },
+                  { key: "razorpay_signature", value: response.razorpay_signature }
+                ]
+              })
+            });
+
+            const data = await res.json();
+
+            if (res.ok && data.id) {
+              const savedOrders = JSON.parse(localStorage.getItem("elaamy_orders") || "[]");
+              savedOrders.unshift({
+                id: String(data.id),
+                date_created: new Date().toISOString(),
+                status: "processing",
+                total: grandTotal.toFixed(2),
+                line_items: cart.map(item => ({
+                  id: Math.random(),
+                  name: item.name,
+                  quantity: item.quantity,
+                  total: (item.price * item.quantity).toFixed(2),
+                  image: item.image
+                })),
+                billing: orderData.billing,
+              });
+              localStorage.setItem("elaamy_orders", JSON.stringify(savedOrders.slice(0, 20)));
+              setOrderNumber(String(data.id));
+              setOrderPlaced(true);
+              clearCart();
+            } else {
+              throw new Error(data.message || "Failed to create order in WooCommerce");
+            }
+          } catch (err: any) {
+            console.error(err);
+            setCheckoutError(err.message || "An error occurred creating your order. Please contact support.");
+          } finally {
+            setLoading(false);
+          }
+        },
+        prefill: {
+          name: `${orderData.billing.first_name} ${orderData.billing.last_name}`,
+          email: orderData.billing.email,
+          contact: orderData.billing.phone
+        },
+        theme: {
+          color: "#e21b22"
+        }
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on('payment.failed', function (response: any) {
+        setCheckoutError(response.error.description || "Payment failed. Please try again.");
+        setLoading(false);
+      });
+      rzp.open();
+
     } catch (err: any) {
       console.error(err);
       setCheckoutError(err.message || "An error occurred during checkout. Please try again.");
-    } finally {
       setLoading(false);
     }
   };
@@ -166,6 +214,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="bg-[#F8F9FA] min-h-screen pb-20">
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
       {/* Header */}
       <div className="bg-white border-b border-gray-100 py-6">
         <div className="container mx-auto px-4 lg:px-8 max-w-6xl">
@@ -278,23 +327,6 @@ export default function CheckoutPage() {
                     );
                   })}
                 </div>
-
-                {/* UPI Details */}
-                {paymentMethod === "upi" && (
-                  <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                    <p className="text-sm font-semibold text-blue-900 mb-2">Pay via UPI</p>
-                    <div className="flex items-center gap-4">
-                      <div className="w-24 h-24 bg-white border border-blue-200 rounded-lg flex items-center justify-center text-xs text-gray-500 text-center p-2">
-                        QR Code<br/>Placeholder
-                      </div>
-                      <div>
-                        <p className="text-xs text-blue-800 mb-1">UPI ID:</p>
-                        <p className="font-bold text-blue-900 text-sm">elaamy@upi</p>
-                        <p className="text-xs text-blue-600 mt-2">Scan QR or pay to UPI ID</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
 
               {/* Submit */}

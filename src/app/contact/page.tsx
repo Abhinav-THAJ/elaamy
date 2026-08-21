@@ -21,38 +21,38 @@ export default function ContactPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
               {/* Store 1 */}
               <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100 hover:shadow-lg transition-shadow">
-                <h4 className="text-xl font-bold mb-4 text-gray-800">Store Berlin</h4>
+                <h4 className="text-xl font-bold mb-4 text-gray-800">Our Address</h4>
                 <div className="space-y-3 text-sm text-gray-600">
                   <div className="flex items-start gap-3">
                     <MapPin className="w-5 h-5 text-pink-500 shrink-0" />
-                    <p>Germany — 785 15h Street,<br/>Office 478/B Green Mall<br/>Berlin, De 81566</p>
+                    <p>AS Building<br/>NH Road Pravachambalam<br/>Pin - 695020</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <Phone className="w-5 h-5 text-pink-500 shrink-0" />
-                    <a href="tel:+1123456788" className="hover:text-pink-500 transition-colors">+1 1234 567 88</a>
+                    <a href="tel:+919656262613" className="hover:text-pink-500 transition-colors">+91 9656262613</a>
                   </div>
                   <div className="flex items-center gap-3">
                     <Mail className="w-5 h-5 text-pink-500 shrink-0" />
-                    <a href="mailto:info@example.com" className="hover:text-pink-500 transition-colors">info@example.com</a>
+                    <a href="mailto:elaamy@gmail.com" className="hover:text-pink-500 transition-colors">elaamy@gmail.com</a>
                   </div>
                 </div>
               </div>
 
               {/* Store 2 */}
               <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100 hover:shadow-lg transition-shadow">
-                <h4 className="text-xl font-bold mb-4 text-gray-800">Store Munich</h4>
+                <h4 className="text-xl font-bold mb-4 text-gray-800">Studio Address</h4>
                 <div className="space-y-3 text-sm text-gray-600">
                   <div className="flex items-start gap-3">
                     <MapPin className="w-5 h-5 text-pink-500 shrink-0" />
-                    <p>Germany — 625 10h Street,<br/>Office 156AB Green Mall<br/>Berlin, De 81566</p>
+                    <p>AS Building<br/>NH Road Pravachambalam<br/>Pin - 695020</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <Phone className="w-5 h-5 text-pink-500 shrink-0" />
-                    <a href="tel:+545612322" className="hover:text-pink-500 transition-colors">+5 456 123 22</a>
+                    <a href="tel:+919656262613" className="hover:text-pink-500 transition-colors">+91 9656262613</a>
                   </div>
                   <div className="flex items-center gap-3">
                     <Mail className="w-5 h-5 text-pink-500 shrink-0" />
-                    <a href="mailto:contact@example.com" className="hover:text-pink-500 transition-colors">contact@example.com</a>
+                    <a href="mailto:elaamy@gmail.com" className="hover:text-pink-500 transition-colors">elaamy@gmail.com</a>
                   </div>
                 </div>
               </div>
