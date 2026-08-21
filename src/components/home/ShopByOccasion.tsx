@@ -3,13 +3,12 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingBag, Heart } from "lucide-react";
-import { useWishlist } from "@/components/WishlistContext";
+import { ShoppingBag } from "lucide-react";
 
 const categories = ["Photo Frame", "Acrylic Photo Frames", "Letter Pad", "Memento and award", "Sticker", "Wedding Card"];
 
 export function ShopByOccasion({ products = [] }: { products?: any[] }) {
-  const { wishlist, addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+
   if (!products || products.length === 0) return null;
 
   const displayProducts = products.slice(0, 8).map(p => ({
@@ -62,28 +61,7 @@ export function ShopByOccasion({ products = [] }: { products?: any[] }) {
                   <button className="w-8 h-8 rounded-full flex items-center justify-center border border-gray-200 text-gray-500 hover:bg-purple-500 hover:text-white hover:border-purple-500 transition-colors">
                     <ShoppingBag className="w-4 h-4" />
                   </button>
-                  <button 
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (isInWishlist(product.id.toString())) {
-                        removeFromWishlist(product.id.toString());
-                      } else {
-                        addToWishlist({
-                          id: product.id.toString(),
-                          name: product.name,
-                          price: product.price,
-                          image: product.image
-                        });
-                      }
-                    }}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center border transition-colors ${
-                      isInWishlist(product.id.toString()) 
-                        ? "bg-pink-500 border-pink-500 text-white" 
-                        : "bg-white border-gray-200 text-gray-500 hover:bg-pink-500 hover:border-pink-500 hover:text-white"
-                    }`}
-                  >
-                    <Heart className={`w-4 h-4 ${isInWishlist(product.id.toString()) ? "fill-current" : ""}`} />
-                  </button>
+
                 </div>
                 <div 
                   className="font-semibold text-gray-900"

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
-import { ShoppingBag, Heart, SlidersHorizontal, X, ChevronDown, ChevronUp, Star } from "lucide-react";
+import { ShoppingBag, SlidersHorizontal, X, ChevronDown, ChevronUp, Star } from "lucide-react";
 import { fetchWooClient } from "@/lib/woocommerce-client";
 import { useCart } from "@/components/CartContext";
 
@@ -41,17 +41,7 @@ export default function CollectionsClient() {
   const [expandedSections, setExpandedSections] = useState({ price: true, categories: true });
   const { addToCart } = useCart();
 
-  // Filtered and sorted products
-  const [wishlist, setWishlist] = useState<Set<string>>(new Set());
 
-  const toggleWishlist = (id: string) => {
-    setWishlist(prev => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
 
   useEffect(() => {
     setLoading(true);
@@ -297,7 +287,7 @@ export default function CollectionsClient() {
                 {filteredProducts.map((product: any) => {
                   const price = parseFloat(product.price || product.regular_price || "0");
                   const image = product.images?.[0]?.src || "/images/custom-wedding-card.png";
-                  const isWishlisted = wishlist.has(String(product.id));
+
                   return (
                     <div
                       key={product.id}
@@ -307,12 +297,7 @@ export default function CollectionsClient() {
                         {product.on_sale && (
                           <span className="absolute top-2 left-2 bg-[#e21b22] text-white text-[9px] font-bold px-2 py-0.5 rounded-full z-10">SALE</span>
                         )}
-                        <button
-                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist(String(product.id)); }}
-                          className={`absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center shadow-sm z-10 transition-all ${isWishlisted ? "bg-pink-500 text-white" : "bg-white text-gray-400 hover:text-pink-500 opacity-0 group-hover:opacity-100"}`}
-                        >
-                          <Heart className={`w-3.5 h-3.5 ${isWishlisted ? "fill-white" : ""}`} />
-                        </button>
+
                         <Image
                           src={image}
                           alt={product.name}

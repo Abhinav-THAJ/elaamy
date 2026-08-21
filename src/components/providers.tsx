@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactLenis } from "lenis/react";
 import { useState } from "react";
 import { CartProvider } from "./CartContext";
-import { WishlistProvider } from "./WishlistContext";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -22,9 +21,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <ReactLenis root>
         <CartProvider>
-          <WishlistProvider>
             {children}
-          </WishlistProvider>
         </CartProvider>
       </ReactLenis>
     </QueryClientProvider>

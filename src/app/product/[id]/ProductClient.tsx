@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { ShoppingBag, Heart, ShieldCheck, Truck, Star, ChevronLeft, ChevronRight, Plus, Minus, Package, Share2 } from "lucide-react";
+import { ShoppingBag, ShieldCheck, Truck, Star, ChevronLeft, ChevronRight, Plus, Minus, Package, Share2 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { fetchWooClient } from "@/lib/woocommerce-client";
@@ -16,7 +16,7 @@ export default function ProductClient() {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [selectedImageIdx, setSelectedImageIdx] = useState(0);
-  const [isWishlisted, setIsWishlisted] = useState(false);
+
   const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
   const { addToCart } = useCart();
 
@@ -156,12 +156,7 @@ export default function ProductClient() {
                   -{discountPercent}% OFF
                 </span>
               )}
-              <button
-                onClick={() => setIsWishlisted(!isWishlisted)}
-                className={`absolute top-4 right-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-md ${isWishlisted ? "bg-pink-500 text-white" : "bg-white text-gray-400 hover:text-pink-500"}`}
-              >
-                <Heart className={`w-5 h-5 ${isWishlisted ? "fill-white" : ""}`} />
-              </button>
+
               <button
                 onClick={async () => {
                   if (navigator.share) {
